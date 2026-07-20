@@ -10,29 +10,28 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-
         body{
             background:#f5f5f5;
             height:100vh;
         }
 
         .login-card{
-            width:900px;
+            width:950px;
             border-radius:25px;
             overflow:hidden;
-            box-shadow:0 10px 30px rgba(0,0,0,.15);
             background:white;
+            box-shadow:0 10px 30px rgba(0,0,0,.15);
         }
 
         .left{
-            background:#d92525;
+            background:#fff4dd;
             display:flex;
-            align-items:center;
             justify-content:center;
+            align-items:center;
         }
 
         .left img{
-            width:320px;
+            width:330px;
         }
 
         .logo{
@@ -40,128 +39,114 @@
         }
 
         .btn-login{
+            width:100%;
             background:#d92525;
             color:white;
-            width:100%;
             font-weight:bold;
         }
 
         .btn-login:hover{
-            background:#b91d1d;
+            background:#b71c1c;
             color:white;
         }
-
     </style>
-
 </head>
+
 <body>
 
 <div class="container h-100">
+    <div class="row h-100 justify-content-center align-items-center">
 
-<div class="row h-100 justify-content-center align-items-center">
+        <div class="col-lg-10">
 
-<div class="col-lg-9">
+            <div class="login-card row g-0">
 
-<div class="login-card row g-0">
+                <div class="col-md-5 left">
+                    <img src="{{ asset('images/login-bakso.png') }}" alt="">
+                </div>
 
-<div class="col-md-5 left">
+                <div class="col-md-7 p-5">
 
-<img src="{{ asset('images/login-bakso.png') }}">
+                    <div class="text-center mb-4">
+                        <img src="{{ asset('images/logo.png') }}" class="logo mb-3">
 
-</div>
+                        <h3>Login</h3>
 
-<div class="col-md-7 p-5">
+                        <p class="text-muted">
+                            Selamat datang di Bakso Pakde Heru
+                        </p>
+                    </div>
 
-<div class="text-center">
+                    @if(session('status'))
+                        <div class="alert alert-success">
+                            {{ session('status') }}
+                        </div>
+                    @endif
 
-<img src="{{ asset('images/logo.png') }}" class="logo mb-3">
+                    @if($errors->any())
+                        <div class="alert alert-danger">
+                            {{ $errors->first() }}
+                        </div>
+                    @endif
 
-<h4 class="fw-bold">
-Selamat Datang Kembali
-</h4>
+                    <form method="POST" action="{{ route('login') }}">
+                        @csrf
 
-<p class="text-muted">
-Masuk untuk melanjutkan pesanan Anda
-</p>
+                        <div class="mb-3">
+                            <label>Email</label>
 
-</div>
+                            <input
+                                type="email"
+                                name="email"
+                                class="form-control"
+                                value="{{ old('email') }}"
+                                required
+                                autofocus>
+                        </div>
 
-<form method="POST" action="{{ route('login') }}">
+                        <div class="mb-3">
+                            <label>Password</label>
 
-@csrf
+                            <input
+                                type="password"
+                                name="password"
+                                class="form-control"
+                                required>
+                        </div>
 
-<div class="mb-3">
+                        <div class="form-check mb-3">
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                name="remember"
+                                id="remember">
 
-<label>Email</label>
+                            <label class="form-check-label" for="remember">
+                                Ingat Saya
+                            </label>
+                        </div>
 
-<input
-type="email"
-name="email"
-class="form-control"
-required>
+                        <button class="btn btn-login">
+                            Masuk
+                        </button>
 
-</div>
+                        <div class="text-center mt-3">
+                            Belum punya akun?
 
-<div class="mb-3">
+                            <a href="{{ route('register') }}">
+                                Daftar di sini
+                            </a>
+                        </div>
 
-<label>Password</label>
+                    </form>
 
-<input
-type="password"
-name="password"
-class="form-control"
-required>
+                </div>
 
-</div>
+            </div>
 
-<div class="d-flex justify-content-between mb-4">
+        </div>
 
-<div>
-
-<input type="checkbox" name="remember">
-
-Ingat Saya
-
-</div>
-
-<a href="{{ route('password.request') }}">
-
-Lupa Password?
-
-</a>
-
-</div>
-
-<button class="btn btn-login">
-
-Masuk
-
-</button>
-
-<div class="text-center mt-3">
-
-Belum punya akun?
-
-<a href="{{ route('register') }}">
-
-Daftar Sekarang
-
-</a>
-
-</div>
-
-</form>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
+    </div>
 </div>
 
 </body>

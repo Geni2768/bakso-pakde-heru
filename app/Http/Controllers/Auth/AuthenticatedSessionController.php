@@ -38,7 +38,7 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('kasir.dashboard');
         }
 
-        return redirect()->route('dashboard');
+        return redirect()->route('pelanggan.dashboard');
     }
 
     /**
