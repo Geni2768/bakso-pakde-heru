@@ -1,135 +1,181 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Bakso Pakde Heru</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    @vite(['resources/css/app.css','resources/js/app.js'])
+<title>
+@yield('title') | Bakso Pakde Heru
+</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+@vite(['resources/css/app.css','resources/js/app.js'])
 
-    <style>
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-        }
 
-        body{
-            background:#f5f5f5;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-        .sidebar{
-            width:250px;
-            height:100vh;
-            position:fixed;
-            left:0;
-            top:0;
-            background:#b30000;
-            color:white;
-        }
 
-        .sidebar h3{
-            padding:25px;
-            text-align:center;
-            font-weight:bold;
-        }
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-        .sidebar a{
-            display:block;
-            color:white;
-            text-decoration:none;
-            padding:15px 25px;
-            transition:.3s;
-        }
 
-        .sidebar a:hover{
-            background:#8b0000;
-        }
+<style>
 
-        .content{
-            margin-left:250px;
-        }
+body{
+font-family:'Poppins',sans-serif;
+}
 
-        .navbar-admin{
-            background:white;
-            padding:18px 30px;
-            box-shadow:0 2px 8px rgba(0,0,0,.1);
-        }
+</style>
 
-        .card-dashboard{
-            border:none;
-            border-radius:15px;
-            box-shadow:0 5px 15px rgba(0,0,0,.08);
-        }
-
-        .icon-card{
-            font-size:35px;
-            color:#b30000;
-        }
-    </style>
 
 </head>
-<body>
 
-<div class="sidebar">
 
-    <h3>🍜 Bakso Pakde Heru</h3>
+<body class="bg-[#f8f5f2]">
 
-    <a href="{{ route('admin.dashboard') }}">
-        <i class="fa fa-home"></i> Dashboard
-    </a>
 
-    <a href="#">
-        <i class="fa fa-list"></i> Kategori
-    </a>
+<div class="flex min-h-screen">
 
-    <a href="#">
-        <i class="fa fa-utensils"></i> Menu
-    </a>
 
-    <a href="#">
-        <i class="fa fa-cart-shopping"></i> Pesanan
-    </a>
+<!-- SIDEBAR -->
 
-    <a href="#">
-        <i class="fa fa-users"></i> User
-    </a>
+<aside class="w-64 bg-[#333333] text-white">
 
-    <a href="#">
-        <i class="fa fa-chart-column"></i> Laporan
-    </a>
 
-    <form action="{{ route('logout') }}" method="POST" class="m-3">
-        @csrf
-        <button class="btn btn-light w-100">
-            Logout
-        </button>
-    </form>
+<div class="p-6">
+
+
+<h1 class="text-xl font-bold text-red-500">
+
+🍜 Bakso Pakde Heru
+
+</h1>
+
+
+<p class="text-xs text-gray-400">
+Admin Panel
+</p>
+
 
 </div>
 
-<div class="content">
 
-    <div class="navbar-admin d-flex justify-content-between">
 
-        <h4>Dashboard Admin</h4>
 
-        <strong>{{ auth()->user()->name }}</strong>
+<nav class="mt-5">
 
-    </div>
 
-    <div class="container mt-4">
+<a class="flex gap-3 px-6 py-3 bg-white text-red-600 rounded-r-full">
 
-        @yield('content')
+<i class="fa fa-home"></i>
 
-    </div>
+Dashboard
+
+</a>
+
+
+
+<a class="flex gap-3 px-6 py-3 hover:bg-gray-700">
+
+<i class="fa fa-bowl-food"></i>
+
+Kelola Menu
+
+</a>
+
+
+
+<a class="flex gap-3 px-6 py-3 hover:bg-gray-700">
+
+<i class="fa fa-layer-group"></i>
+
+Kategori
+
+</a>
+
+
+
+<a class="flex gap-3 px-6 py-3 hover:bg-gray-700">
+
+<i class="fa fa-cart-shopping"></i>
+
+Pesanan
+
+</a>
+
+
+
+<a class="flex gap-3 px-6 py-3 hover:bg-gray-700">
+
+<i class="fa fa-chart-line"></i>
+
+Laporan
+
+</a>
+
+
+</nav>
+
+
+</aside>
+
+
+
+
+<!-- CONTENT -->
+
+<main class="flex-1">
+
+
+<header class="bg-white px-8 py-5 flex justify-between shadow-sm">
+
+
+<div>
+
+<h2 class="font-bold text-xl">
+
+@yield('title')
+
+</h2>
+
+
+<p class="text-gray-400 text-sm">
+
+Bakso Pakde Heru
+
+</p>
+
 
 </div>
+
+
+<div>
+
+<img src="https://ui-avatars.com/api/?name=Admin"
+class="rounded-full w-12">
+
+</div>
+
+
+</header>
+
+
+
+<section class="p-8">
+
+@yield('content')
+
+</section>
+
+
+
+</main>
+
+
+</div>
+
 
 </body>
+
 </html>

@@ -1,76 +1,188 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Models\Kategori;
+use App\Models\Menu;
+use App\Models\Order;
+use App\Models\Payment;
+
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes — Bakso Pak Heru
+| CUSTOMER
 |--------------------------------------------------------------------------
 */
 
-// Halaman utama redirect ke login
-Route::get('/', function () {
-    return redirect()->route('login');
-});
+Route::get('/', [CustomerController::class,'index'])
+->name('home');
 
-// Routes yang butuh login
-Route::middleware(['auth'])->group(function () {
 
-    // Dashboard redirect sesuai role
-    Route::get('/dashboard', function () {
-        $user = auth()->user();
+Route::get('/pesanan-menu',
+[CustomerController::class,'menu'])
+->name('customer.menu');
 
-        if ($user->hasRole('admin')) {
-            return redirect()->route('admin.dashboard');
-        } elseif ($user->hasRole('kasir')) {
-            return redirect()->route('kasir.dashboard');
-        }
 
-        return redirect()->route('pelanggan.dashboard');
-    })->name('dashboard');
+Route::post('/cart/add/{id}',
+[CustomerController::class,'addCart'])
+->name('cart.add');
 
-    // Dashboard tiap role
-    Route::view('/admin', 'admin.dashboard')->name('admin.dashboard');
-    Route::view('/kasir', 'kasir.dashboard')->name('kasir.dashboard');
-    Route::view('/pelanggan', 'pelanggan.dashboard')->name('pelanggan.dashboard');
 
-    // Logout
-    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+Route::get('/cart',
+[CustomerController::class,'cart'])
+->name('cart');
 
-    // CRUD Kategori & Menu
-    Route::middleware(['role:kasir|admin'])->group(function () {
 
-        // Kategori
-        Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
-        Route::get('/kategori/data', [KategoriController::class, 'getData'])->name('kategori.data');
-        Route::post('/kategori', [KategoriController::class, 'store'])->name('kategori.store');
-        Route::get('/kategori/{kategori}', [KategoriController::class, 'show'])->name('kategori.show');
-        Route::put('/kategori/{kategori}', [KategoriController::class, 'update'])->name('kategori.update');
-        Route::delete('/kategori/{kategori}', [KategoriController::class, 'destroy'])->name('kategori.destroy');
+Route::delete('/cart/{id}',
+[CustomerController::class,'deleteCart'])
+->name('cart.delete');
 
-        // Menu
-        Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
-        Route::get('/menu/data', [MenuController::class, 'getData'])->name('menu.data');
-        Route::post('/menu', [MenuController::class, 'store'])->name('menu.store');
-        Route::get('/menu/{menu}', [MenuController::class, 'show'])->name('menu.show');
-        Route::post('/menu/{menu}', [MenuController::class, 'update'])->name('menu.update');
-        Route::delete('/menu/{menu}', [MenuController::class, 'destroy'])->name('menu.destroy');
-    });
-});
 
-// Guest
+
+/*
+|--------------------------------------------------------------------------
+| AUTH
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware('guest')->group(function () {
 
-    Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
-    Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+    Route::get('/login',
+    [AuthenticatedSessionController::class,'create'])
+    ->name('login');
 
-    Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
-    Route::post('/register', [RegisteredUserController::class, 'store']);
+
+    Route::post('/login',
+    [AuthenticatedSessionController::class,'store']);
+
+
+    Route::get('/register',
+    [RegisteredUserController::class,'create'])
+    ->name('register');
+
+
+    Route::post('/register',
+    [RegisteredUserController::class,'store']);
+
 });
 
-// Breeze
+
+
+/*
+|--------------------------------------------------------------------------
+| LOGIN USER
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth'])->group(function () {
+
+
+Route::get('/dashboard', function () {
+
+
+    $user = auth()->user();
+
+
+    if($user->hasRole('admin')){
+
+        return redirect()->route('admin.dashboard');
+
+    }
+
+
+    if($user->hasRole('kasir')){
+
+        return redirect()->route('kasir.dashboard');
+
+    }
+
+
+    return redirect()->route('pelanggan.dashboard');
+
+
+})->name('dashboard');
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN DASHBOARD
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/admin/dashboard', function(){
+
+
+$totalMenu = Menu::count();
+
+$totalKategori = Kategori::count();
+
+$totalOrder = Order::count();
+
+$totalPendapatan = Payment::sum('amount');
+
+
+
+return view('admin.dashboard',
+compact(
+'totalMenu',
+'totalKategori',
+'totalOrder',
+'totalPendapatan'
+));
+
+
+})->name('admin.dashboard');
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN CRUD
+|--------------------------------------------------------------------------
+*/
+
+
+Route::middleware(['role:admin|kasir'])->group(function(){
+
+
+Route::resource('/kategori',
+KategoriController::class);
+
+
+Route::resource('/menu',
+MenuController::class);
+
+
+});
+
+
+
+
+Route::view('/kasir',
+'kasir.dashboard')
+->name('kasir.dashboard');
+
+
+
+Route::view('/pelanggan',
+'pelanggan.dashboard')
+->name('pelanggan.dashboard');
+
+
+
+
+Route::post('/logout',
+[AuthenticatedSessionController::class,'destroy'])
+->name('logout');
+
+});
+
+
 require __DIR__.'/auth.php';
