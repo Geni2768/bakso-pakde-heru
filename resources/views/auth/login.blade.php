@@ -1,153 +1,209 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Bakso Pakde Heru</title>
+@extends('layouts.guest')
 
-    @vite(['resources/css/app.css','resources/js/app.js'])
+@section('content')
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<div class="text-center mb-8">
 
-    <style>
-        body{
-            background:#f5f5f5;
-            height:100vh;
-        }
+    <img src="{{ asset('images/logo.png') }}"
+         class="w-24 mx-auto mb-5">
 
-        .login-card{
-            width:950px;
-            border-radius:25px;
-            overflow:hidden;
-            background:white;
-            box-shadow:0 10px 30px rgba(0,0,0,.15);
-        }
+    <h1 class="text-4xl font-extrabold text-red-700">
 
-        .left{
-            background:#fff4dd;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-        }
+        Selamat Datang
 
-        .left img{
-            width:330px;
-        }
+    </h1>
 
-        .logo{
-            width:180px;
-        }
+    <p class="text-gray-500 mt-2">
 
-        .btn-login{
-            width:100%;
-            background:#d92525;
-            color:white;
-            font-weight:bold;
-        }
+        Login untuk melanjutkan ke Bakso Pakde Heru
 
-        .btn-login:hover{
-            background:#b71c1c;
-            color:white;
-        }
-    </style>
-</head>
+    </p>
 
-<body>
+</div>
 
-<div class="container h-100">
-    <div class="row h-100 justify-content-center align-items-center">
+@if(session('status'))
 
-        <div class="col-lg-10">
+<div class="mb-5 rounded-xl bg-green-100 text-green-700 p-4">
 
-            <div class="login-card row g-0">
+    {{ session('status') }}
 
-                <div class="col-md-5 left">
-                    <img src="{{ asset('images/login-bakso.png') }}" alt="">
-                </div>
+</div>
 
-                <div class="col-md-7 p-5">
+@endif
 
-                    <div class="text-center mb-4">
-                        <img src="{{ asset('images/logo.png') }}" class="logo mb-3">
+@if ($errors->any())
 
-                        <h3>Login</h3>
+<div class="mb-5 rounded-xl bg-red-100 border border-red-200 p-4">
 
-                        <p class="text-muted">
-                            Selamat datang di Bakso Pakde Heru
-                        </p>
-                    </div>
+    <ul class="text-red-600 text-sm list-disc ml-5">
 
-                    @if(session('status'))
-                        <div class="alert alert-success">
-                            {{ session('status') }}
-                        </div>
-                    @endif
+        @foreach($errors->all() as $error)
 
-                    @if($errors->any())
-                        <div class="alert alert-danger">
-                            {{ $errors->first() }}
-                        </div>
-                    @endif
+            <li>{{ $error }}</li>
 
-                    <form method="POST" action="{{ route('login') }}">
-                        @csrf
+        @endforeach
 
-                        <div class="mb-3">
-                            <label>Email</label>
+    </ul>
 
-                            <input
-                                type="email"
-                                name="email"
-                                class="form-control"
-                                value="{{ old('email') }}"
-                                required
-                                autofocus>
-                        </div>
+</div>
 
-                        <div class="mb-3">
-                            <label>Password</label>
+@endif
 
-                            <input
-                                type="password"
-                                name="password"
-                                class="form-control"
-                                required>
-                        </div>
+<form method="POST" action="{{ route('login') }}">
 
-                        <div class="form-check mb-3">
-                            <input
-                                class="form-check-input"
-                                type="checkbox"
-                                name="remember"
-                                id="remember">
+    @csrf
 
-                            <label class="form-check-label" for="remember">
-                                Ingat Saya
-                            </label>
-                        </div>
+    {{-- EMAIL --}}
 
-                        <button class="btn btn-login">
-                            Masuk
-                        </button>
+    <div class="mb-5">
 
-                        <div class="text-center mt-3">
-                            Belum punya akun?
+        <label class="block font-semibold mb-2">
 
-                            <a href="{{ route('register') }}">
-                                Daftar di sini
-                            </a>
-                        </div>
+            Email
 
-                    </form>
+        </label>
 
-                </div>
+        <div class="relative">
 
-            </div>
+            <i class="fa-solid fa-envelope absolute left-4 top-4 text-gray-400"></i>
+
+            <input
+                name="email"
+                type="email"
+                value="{{ old('email') }}"
+                required
+                autofocus
+                class="input-login w-full pl-11"
+                placeholder="Masukkan Email">
 
         </div>
 
     </div>
+
+    {{-- PASSWORD --}}
+
+    <div class="mb-3">
+
+        <label class="block font-semibold mb-2">
+
+            Password
+
+        </label>
+
+        <div class="relative">
+
+            <i class="fa-solid fa-lock absolute left-4 top-4 text-gray-400"></i>
+
+            <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                class="input-login w-full pl-11 pr-12"
+                placeholder="Masukkan Password">
+
+            <button
+                type="button"
+                onclick="togglePassword()"
+                class="absolute right-4 top-4">
+
+                <i id="eyeIcon"
+                   class="fa-solid fa-eye text-gray-500"></i>
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="flex justify-between items-center mb-6">
+
+        <label class="flex items-center gap-2">
+
+            <input
+                type="checkbox"
+                name="remember">
+
+            <span class="text-sm">
+
+                Ingat Saya
+
+            </span>
+
+        </label>
+
+        @if(Route::has('password.request'))
+
+        <a
+            href="{{ route('password.request') }}"
+            class="text-red-600 text-sm font-semibold">
+
+            Lupa Password?
+
+        </a>
+
+        @endif
+
+    </div>
+
+    <button
+        class="btn-login w-full py-4 rounded-xl text-white font-bold text-lg">
+
+        <i class="fa-solid fa-right-to-bracket mr-2"></i>
+
+        Login
+
+    </button>
+
+</form>
+
+<div class="mt-8 text-center">
+
+    Belum punya akun?
+
+    <a href="{{ route('register') }}"
+       class="font-bold text-red-600">
+
+        Daftar Sekarang
+
+    </a>
+
 </div>
 
-</body>
-</html>
+<div class="mt-8 text-center">
+
+    <p class="text-gray-400 text-sm">
+
+        © {{ date('Y') }} Bakso Pakde Heru
+
+    </p>
+
+</div>
+
+<script>
+
+function togglePassword(){
+
+    let password=document.getElementById("password");
+
+    let eye=document.getElementById("eyeIcon");
+
+    if(password.type==="password"){
+
+        password.type="text";
+
+        eye.classList.replace("fa-eye","fa-eye-slash");
+
+    }else{
+
+        password.type="password";
+
+        eye.classList.replace("fa-eye-slash","fa-eye");
+
+    }
+
+}
+
+</script>
+
+@endsection

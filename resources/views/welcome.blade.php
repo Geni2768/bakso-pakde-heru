@@ -1,308 +1,268 @@
-<!DOCTYPE html>
-<html lang="id">
+@extends('layouts.app')
 
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+@section('content')
 
-<title>Bakso Pakde Heru</title>
+<!-- Hero -->
+<section class="bg-[#FFF7EA]">
+    <div class="max-w-7xl mx-auto px-8 py-12">
 
-@vite(['resources/css/app.css','resources/js/app.js'])
+        <div class="grid lg:grid-cols-2 gap-10 items-center">
 
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+            <div>
 
-</head>
+                <h1 class="text-6xl font-bold leading-tight text-gray-900">
+                    Bakso Favorit
+                    <br>
+                    Keluarga
+                </h1>
 
+                <p class="mt-6 text-xl text-gray-600">
+                    Enak, Murah, Hangat dan Siap Diantar
+                    sampai rumah Anda.
+                </p>
 
-<body class="bg-white">
+                <div class="mt-10 flex gap-4">
 
+                    <a href="{{ route('menu.index') }}"
+                       class="bg-red-600 hover:bg-red-700 duration-300 text-white px-8 py-4 rounded-xl shadow-lg">
 
-<div class="max-w-6xl mx-auto shadow min-h-screen">
+                        🍜 Pesan Sekarang
 
+                    </a>
 
-<!-- NAVBAR -->
+                    <a href="#menu"
+                       class="border border-red-600 text-red-600 hover:bg-red-600 hover:text-white duration-300 px-8 py-4 rounded-xl">
 
-<nav class="flex justify-between items-center px-8 py-5">
+                        Lihat Menu
 
+                    </a>
 
-<div class="flex items-center gap-3">
+                </div>
 
+            </div>
 
-<img src="{{asset('assets/logo.png')}}"
-class="w-14">
+            <div class="flex justify-center">
 
+                <img src="{{ asset('images/bakso1.png') }}"
+                     class="w-[520px] drop-shadow-2xl hover:scale-105 duration-500">
 
-<div class="font-bold text-red-600">
+            </div>
 
-Bakso<br>
+        </div>
 
-<span class="text-black italic">
-Pakde Heru
-</span>
-
-</div>
-
-
-</div>
-
-
-
-<div class="flex gap-8 font-semibold text-sm">
-
-
-<a href="/" class="text-red-600">
-Beranda
-</a>
-
-
-<a href="/pesanan-menu">
-Menu
-</a>
-
-
-<a href="/cart">
-
-<i class="fa fa-shopping-cart text-red-600"></i>
-
-@if(session('cart'))
-({{count(session('cart'))}})
-@endif
-
-</a>
-
-
-</div>
-
-
-</nav>
-
-
-
-
-
-<!-- HERO -->
-
-
-<section class="bg-orange-50 px-10 py-10 flex items-center">
-
-
-<div class="w-1/2">
-
-
-<h1 class="text-5xl font-bold">
-
-Bakso Favorit<br>
-keluarga
-
-</h1>
-
-
-
-<p class="text-gray-600 text-sm mt-5">
-
-Enak, Murah dan Siap Diantar<br>
-Sampai Rumah Anda
-
-</p>
-
-
-
-<a href="/pesanan-menu">
-
-<button
-class="mt-8 bg-red-600 text-white px-6 py-3 rounded">
-
-
-<i class="fa fa-shopping-bag mr-2"></i>
-
-Pesanan Saya
-
-
-</button>
-
-</a>
-
-
-
-</div>
-
-
-
-
-
-<div class="w-1/2 text-center">
-
-
-<img src="{{asset('assets/bakso.png')}}"
-class="w-96 mx-auto">
-
-
-</div>
-
-
-
+    </div>
 </section>
 
+<!-- Menu Favorit -->
 
+<section id="menu" class="py-16">
 
+<div class="max-w-7xl mx-auto px-8">
 
-
-
-
-<!-- MENU FAVORIT -->
-
-
-<section class="px-10 py-8">
-
-
-<h2 class="font-bold mb-5">
-
-<i class="fa fa-shopping-basket text-red-600"></i>
+<h2 class="text-4xl font-bold mb-10">
 
 Menu Favorit
 
 </h2>
 
+<div class="grid md:grid-cols-4 gap-8">
 
+<!-- CARD -->
 
-<div class="grid grid-cols-3 gap-8">
+<div class="bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl duration-300">
 
+<img src="{{ asset('images/bakso1.png') }}"
+class="w-full h-56 object-contain p-4">
 
+<div class="p-6">
 
-@foreach($menus as $menu)
+<h3 class="font-bold text-xl">
 
-
-
-<div class="text-center">
-
-
-<img src="{{asset('storage/'.$menu->gambar)}}"
-class="w-24 h-24 rounded-full object-cover mx-auto">
-
-
-
-<h3 class="font-bold mt-3">
-
-{{$menu->nama_menu}}
+Bakso Urat
 
 </h3>
 
+<p class="text-red-600 font-bold text-2xl mt-3">
 
-
-<p class="text-red-600">
-
-Rp {{number_format($menu->harga,0,',','.')}}
+Rp15.000
 
 </p>
 
-
-
-<form action="{{route('cart.add',$menu->id)}}"
-method="POST">
-
-@csrf
-
-
 <button
-class="bg-red-600 text-white rounded-full w-7 h-7 mt-2">
+class="mt-6 w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl">
 
-
-+
+Tambah
 
 </button>
 
-
-</form>
-
-
+</div>
 
 </div>
 
+<!-- CARD -->
 
+<div class="bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl duration-300">
 
-@endforeach
+<img src="{{ asset('images/bakso2.png') }}"
+class="w-full h-56 object-contain p-4">
 
+<div class="p-6">
 
+<h3 class="font-bold text-xl">
+
+Bakso Halus
+
+</h3>
+
+<p class="text-red-600 font-bold text-2xl mt-3">
+
+Rp18.000
+
+</p>
+
+<button
+class="mt-6 w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl">
+
+Tambah
+
+</button>
 
 </div>
 
+</div>
+
+<!-- CARD -->
+
+<div class="bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl duration-300">
+
+<img src="{{ asset('images/bakso3.png') }}"
+class="w-full h-56 object-contain p-4">
+
+<div class="p-6">
+
+<h3 class="font-bold text-xl">
+
+Bakso Spesial
+
+</h3>
+
+<p class="text-red-600 font-bold text-2xl mt-3">
+
+Rp22.000
+
+</p>
+
+<button
+class="mt-6 w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl">
+
+Tambah
+
+</button>
+
+</div>
+
+</div>
+
+<!-- CARD -->
+
+<div class="bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl duration-300">
+
+<img src="{{ asset('images/esteh.png') }}"
+class="w-full h-56 object-contain p-4">
+
+<div class="p-6">
+
+<h3 class="font-bold text-xl">
+
+Es Teh
+
+</h3>
+
+<p class="text-red-600 font-bold text-2xl mt-3">
+
+Rp5.000
+
+</p>
+
+<button
+class="mt-6 w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl">
+
+Tambah
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
 
 </section>
 
+<!-- Footer -->
 
+<footer class="bg-red-700 text-white mt-20">
 
+<div class="max-w-7xl mx-auto px-8 py-12">
 
-
-
-
-
-<!-- FOOTER -->
-
-
-<footer class="bg-red-600 text-white px-10 py-6">
-
-
-<div class="grid grid-cols-3 text-sm">
-
+<div class="grid md:grid-cols-3 gap-8">
 
 <div>
 
-<b>Alamat</b>
+<h2 class="text-3xl font-bold">
 
-<p>
-Jl. Raya Tangerang<br>
-Kota Tangerang
+Bakso Pakde Heru
+
+</h2>
+
+<p class="mt-3">
+
+Jl Mawar No 12 Sukajadi
+
+Bandung
+
 </p>
 
-
 </div>
-
-
-
 
 <div>
 
-<b>Telepon</b>
+<h2 class="font-bold text-xl">
 
-<p>
+WhatsApp
 
-<i class="fa fa-phone"></i>
-0812-3812-1676
+</h2>
+
+<p class="mt-4">
+
+0812-3456-7890
+
+</p>
+
+</div>
+
+<div>
+
+<h2 class="font-bold text-xl">
+
+Jam Operasional
+
+</h2>
+
+<p class="mt-4">
+
+09.00 - 21.00 WIB
 
 </p>
 
 </div>
 
-
-
-
-
-<div class="text-right">
-
-
-<b>Jam Buka</b>
-
-
-<p>
-
-07.00 - 17.00 WIB
-
-</p>
-
-
 </div>
 
-
 </div>
-
 
 </footer>
 
-
-</div>
-
-
-</body>
-
-</html>
+@endsection

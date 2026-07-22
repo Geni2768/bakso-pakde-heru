@@ -1,209 +1,234 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+@extends('layouts.guest')
 
-<meta charset="UTF-8">
+@section('content')
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1">
+<div class="text-center mb-8">
 
-<title>Register</title>
+    <h1 class="text-3xl font-bold text-red-600">
+        Buat Akun Baru
+    </h1>
 
-@vite(['resources/css/app.css','resources/js/app.js'])
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<style>
-
-body{
-
-background:#f5f5f5;
-
-height:100vh;
-
-}
-
-.register-card{
-
-width:950px;
-
-border-radius:25px;
-
-overflow:hidden;
-
-background:white;
-
-box-shadow:0 10px 30px rgba(0,0,0,.15);
-
-}
-
-.left{
-
-background:#fff4dd;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-}
-
-.left img{
-
-width:340px;
-
-}
-
-.logo{
-
-width:180px;
-
-}
-
-.btn-register{
-
-background:#d92525;
-
-color:white;
-
-font-weight:bold;
-
-width:100%;
-
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="container h-100">
-
-<div class="row h-100 justify-content-center align-items-center">
-
-<div class="col-lg-10">
-
-<div class="register-card row g-0">
-
-<div class="col-md-5 left">
-
-<img src="{{ asset('images/register-bakso.png') }}">
+    <p class="text-gray-500 mt-2">
+        Daftar untuk mulai memesan Bakso Pakde Heru
+    </p>
 
 </div>
 
-<div class="col-md-7 p-5">
+@if ($errors->any())
 
-<div class="text-center">
+<div class="mb-5 rounded-xl bg-red-100 border border-red-200 p-4">
 
-<img src="{{ asset('images/logo.png') }}" class="logo mb-3">
+    <ul class="list-disc ml-5 text-red-600 text-sm">
 
-<h4>Buat Akun Baru</h4>
+        @foreach ($errors->all() as $error)
 
-<p class="text-muted">
+        <li>{{ $error }}</li>
 
-Daftar untuk mulai memesan
+        @endforeach
 
-</p>
+    </ul>
 
 </div>
+
+@endif
 
 <form method="POST" action="{{ route('register') }}">
 
-@csrf
+    @csrf
 
-<div class="mb-3">
+    <!-- Nama -->
 
-<label>Nama Lengkap</label>
+    <div class="mb-4">
 
-<input
-type="text"
-name="name"
-class="form-control"
-required>
+        <label class="font-semibold block mb-2">
 
-</div>
+            Nama Lengkap
 
-<div class="mb-3">
+        </label>
 
-<label>Email</label>
+        <div class="relative">
 
-<input
-type="email"
-name="email"
-class="form-control"
-required>
+            <i class="fa-solid fa-user absolute left-4 top-4 text-gray-400"></i>
 
-</div>
+            <input
+                type="text"
+                name="name"
+                value="{{ old('name') }}"
+                required
+                class="input-login w-full pl-11"
+                placeholder="Masukkan nama lengkap">
 
-<div class="mb-3">
+        </div>
 
-<label>No HP</label>
+    </div>
 
-<input
-type="text"
-name="no_hp"
-class="form-control">
+    <!-- Email -->
 
-</div>
+    <div class="mb-4">
 
-<div class="mb-3">
+        <label class="font-semibold block mb-2">
 
-<label>Password</label>
+            Email
 
-<input
-type="password"
-name="password"
-class="form-control"
-required>
+        </label>
 
-</div>
+        <div class="relative">
 
-<div class="mb-3">
+            <i class="fa-solid fa-envelope absolute left-4 top-4 text-gray-400"></i>
 
-<label>Konfirmasi Password</label>
+            <input
+                type="email"
+                name="email"
+                value="{{ old('email') }}"
+                required
+                class="input-login w-full pl-11"
+                placeholder="Masukkan email">
 
-<input
-type="password"
-name="password_confirmation"
-class="form-control"
-required>
+        </div>
 
-</div>
+    </div>
 
-<button class="btn btn-register">
+    <!-- No HP -->
 
-Daftar
+    <div class="mb-4">
 
-</button>
+        <label class="font-semibold block mb-2">
 
-<div class="text-center mt-3">
+            Nomor HP
 
-Sudah punya akun?
+        </label>
 
-<a href="{{ route('login') }}">
+        <div class="relative">
 
-Masuk di sini
+            <i class="fa-solid fa-phone absolute left-4 top-4 text-gray-400"></i>
 
-</a>
+            <input
+                type="text"
+                name="no_hp"
+                value="{{ old('no_hp') }}"
+                class="input-login w-full pl-11"
+                placeholder="08xxxxxxxxxx">
 
-</div>
+        </div>
+
+    </div>
+
+    <!-- Password -->
+
+    <div class="mb-4">
+
+        <label class="font-semibold block mb-2">
+
+            Password
+
+        </label>
+
+        <div class="relative">
+
+            <i class="fa-solid fa-lock absolute left-4 top-4 text-gray-400"></i>
+
+            <input
+                id="password"
+                type="password"
+                name="password"
+                required
+                class="input-login w-full pl-11 pr-11"
+                placeholder="Password">
+
+            <button
+                type="button"
+                onclick="showPassword('password','eye1')"
+                class="absolute right-4 top-4">
+
+                <i id="eye1" class="fa-solid fa-eye"></i>
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- Konfirmasi -->
+
+    <div class="mb-6">
+
+        <label class="font-semibold block mb-2">
+
+            Konfirmasi Password
+
+        </label>
+
+        <div class="relative">
+
+            <i class="fa-solid fa-lock absolute left-4 top-4 text-gray-400"></i>
+
+            <input
+                id="password_confirmation"
+                type="password"
+                name="password_confirmation"
+                required
+                class="input-login w-full pl-11 pr-11"
+                placeholder="Ulangi password">
+
+            <button
+                type="button"
+                onclick="showPassword('password_confirmation','eye2')"
+                class="absolute right-4 top-4">
+
+                <i id="eye2" class="fa-solid fa-eye"></i>
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <button
+        class="btn-login text-white w-full py-4 rounded-xl font-semibold">
+
+        Daftar Sekarang
+
+    </button>
 
 </form>
 
-</div>
+<div class="text-center mt-6">
+
+    Sudah punya akun?
+
+    <a href="{{ route('login') }}"
+       class="text-red-600 font-semibold">
+
+        Login
+
+    </a>
 
 </div>
 
-</div>
+<script>
 
-</div>
+function showPassword(id,icon){
 
-</div>
+    let input=document.getElementById(id);
 
-</div>
+    let eye=document.getElementById(icon);
 
-</body>
+    if(input.type==="password"){
 
-</html>
+        input.type="text";
+
+        eye.classList.replace("fa-eye","fa-eye-slash");
+
+    }else{
+
+        input.type="password";
+
+        eye.classList.replace("fa-eye-slash","fa-eye");
+
+    }
+
+}
+
+</script>
+
+@endsection
