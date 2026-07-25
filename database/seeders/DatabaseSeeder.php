@@ -14,12 +14,12 @@ use Illuminate\Database\Seeder;
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Urutan seeder PENTING — jangan diubah urutannya
-     * karena ada foreign key dependency antar tabel.
+     * Seed the application's database.
      */
     public function run(): void
     {
         $this->call([
+<<<<<<< HEAD
             RoleSeeder::class,      // 1. Buat roles dulu
             UserSeeder::class,      // 2. Buat user (butuh roles)
             KategoriSeeder::class,  // 3. Buat kategori
@@ -46,6 +46,13 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AdminSeeder::class,
 >>>>>>> 9d723fef31be6d43e2575f0c2ce6d2f979123178
+=======
+            RoleSeeder::class,
+            UserSeeder::class,
+            KategoriSeeder::class,
+            MenuSeeder::class,
+            AdminSeeder::class,
+>>>>>>> 9886bab0c5c8dc7f6115c38e605048a4d6e53b29
         ]);
     }
 }

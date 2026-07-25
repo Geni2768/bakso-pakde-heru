@@ -1,7 +1,10 @@
 <<<<<<< HEAD
-# 🍜 Bakso Pak Heru — Sistem Kasir & Manajemen Menu
+<<<<<<< HEAD
+=======
+>>>>>>> 9886bab0c5c8dc7f6115c38e605048a4d6e53b29
+# 🍜 Bakso Pakde Heru — Sistem Kasir & Manajemen Menu
 
-Aplikasi web kasir untuk usaha bakso **Pak Heru** berbasis Laravel 11.
+Aplikasi web kasir untuk usaha bakso **Pakde Heru** berbasis Laravel 11.
 Menggantikan sistem manual dengan sistem digital multi-role yang efisien.
 
 ---
@@ -31,7 +34,7 @@ Menggantikan sistem manual dengan sistem digital multi-role yang efisien.
 ### 1. Clone & Install
 
 ```bash
-git clone <repo-url> bakso-pak-heru
+git clone <repo-url> bakso-pakde-heru
 cd bakso-pak-heru
 composer install
 npm install && npm run build
@@ -46,7 +49,7 @@ php artisan key:generate
 
 Edit `.env`:
 ```env
-DB_DATABASE=bakso_pak_heru
+DB_DATABASE=bakso_pakde_heru
 DB_USERNAME=root
 DB_PASSWORD=
 ```
@@ -54,7 +57,7 @@ DB_PASSWORD=
 ### 3. Buat Database
 
 ```sql
-CREATE DATABASE bakso_pak_heru;
+CREATE DATABASE bakso_pakde_heru;
 ```
 
 ### 4. Jalankan Migration & Seeder
@@ -84,9 +87,9 @@ Akses: `http://localhost:8000`
 
 | Role | Email | Password |
 |------|-------|----------|
-| Admin | admin@baksopakheru.com | password |
-| Kasir 1 | kasir1@baksopakheru.com | password |
-| Kasir 2 | kasir2@baksopakheru.com | password |
+| Admin | admin@baksopakdeheru.com | password |
+| Kasir 1 | kasir1@baksopakdeheru.com | password |
+| Kasir 2 | kasir2@baksopakdeheru.com | password |
 | Pelanggan | budi@mail.com | password |
 
 ---
@@ -163,6 +166,7 @@ Route::middleware(['role:kasir|admin'])->group(function () {
 | **[Nama Lo]** | Migration, Seeder, CRUD Menu & Kategori, Eager Loading |
 | **[Anggota 2]** | Auth multi-role, Middleware, Dashboard Admin |
 | **[Anggota 3]** | Fitur Kasir, Transaksi, Laporan, UI Pelanggan |
+<<<<<<< HEAD
 =======
 # 🍜 Bakso Pakde Heru
 
@@ -171,7 +175,7 @@ Sistem Penjualan Kantin Berbasis Web menggunakan Laravel.
 ## Anggota Kelompok
 
 - Maria Geni Anita Mare
-- Riadi Naibaho
+- Novriadi Naibaho
 - Theobaldus S. Ngaban
 
 ## Deskripsi
@@ -220,3 +224,5 @@ php artisan serve
 Project ini dibuat untuk keperluan UAS Pemrograman Web II.
 
 >>>>>>> 9d723fef31be6d43e2575f0c2ce6d2f979123178
+=======
+>>>>>>> 9886bab0c5c8dc7f6115c38e605048a4d6e53b29
