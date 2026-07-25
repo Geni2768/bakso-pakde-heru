@@ -7,7 +7,7 @@ use App\Http\Controllers\MenuController;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes — Bakso Pak Heru
+| Web Routes — Bakso Pakde Heru
 |--------------------------------------------------------------------------
 */
 
