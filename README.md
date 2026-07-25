@@ -7,7 +7,111 @@
 Aplikasi web kasir untuk usaha bakso **Pakde Heru** berbasis Laravel 11.
 Menggantikan sistem manual dengan sistem digital multi-role yang efisien.
 
+---# 🍜 Bakso Pakde Heru — Sistem Kasir & Manajemen Menu
+
+Aplikasi web kasir untuk usaha bakso **Pakde Heru** berbasis Laravel 11.
+Menggantikan sistem manual dengan sistem digital multi-role yang efisien.
+
+## Anggota Kelompok
+
+- Maria Geni Anita Mare
+- Novriadi Naibaho
+- Theobaldus S. Ngaban
+
+## Deskripsi
+
+Aplikasi ini dibuat untuk memenuhi tugas UAS Pemrograman Web II. Sistem digunakan untuk memesan menu Bakso Pakde Heru secara online dengan tiga hak akses, yaitu Admin, Kasir, dan Pelanggan.
+
 ---
+
+## 👥 Role Pengguna
+
+| Role | Akses |
+|------|-------|
+| **Admin** | Semua fitur + kelola user + laporan |
+| **Kasir** | Kelola menu, kategori, dan transaksi |
+| **Pelanggan** | Lihat menu dan riwayat pesanan |
+
+---
+
+## ⚙️ Tech Stack
+
+- **Framework**: Laravel 11
+- **Auth**: Laravel Breeze (Blade + Alpine.js)
+- **RBAC**: Spatie Laravel Permission
+- **Database**: MySQL
+- **Frontend**: Blade + Tailwind CSS + AJAX (Fetch API)
+
+---
+
+## 🚀 Instalasi
+
+### 1. Clone & Install
+
+```bash
+git clone <repo-url> bakso-pakde-heru
+cd bakso-pakde-heru
+composer install
+npm install && npm run build
+```
+
+### 2. Setup Environment
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+Edit `.env`:
+```env
+DB_DATABASE=bakso_pakde_heru
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### 3. Buat Database
+
+```sql
+CREATE DATABASE bakso_pakde_heru;
+```
+
+### 4. Jalankan Migration & Seeder
+
+```bash
+php artisan migrate
+php artisan db:seed
+```
+
+### 5. Link Storage (untuk gambar menu)
+
+```bash
+php artisan storage:link
+```
+
+### 6. Jalankan Server
+
+```bash
+php artisan serve
+```
+
+Akses: `http://localhost:8000`
+
+---
+
+## 🔑 Akun Default (Setelah Seeder)
+
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | admin@baksopakdeheru.com | password |
+| Kasir 1 | kasir1@baksopakdeheru.com | password |
+| Kasir 2 | kasir2@baksopakdeheru.com | password |
+| Pelanggan | budi@mail.com | password |
+
+---
+
+## Lisensi
+
+Project ini dibuat untuk keperluan UAS Pemrograman Web II.
 
 ## 👥 Role Pengguna
 
