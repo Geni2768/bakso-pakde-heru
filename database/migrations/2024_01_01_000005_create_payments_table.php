@@ -7,27 +7,48 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Jalankan migration untuk membuat tabel payments.
+     * Run the migrations.
      */
     public function up(): void
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
+
+            // Relasi ke order
             $table->foreignId('order_id')
-                  ->constrained('orders')
-                  ->onDelete('cascade');
-            $table->decimal('jumlah_bayar', 12, 2);
-            $table->decimal('kembalian', 12, 2)->default(0);
-            $table->enum('metode_pembayaran', ['tunai', 'transfer', 'qris'])
-                  ->default('tunai');
-            $table->enum('status_pembayaran', ['lunas', 'belum_lunas'])
-                  ->default('belum_lunas');
+                ->constrained('orders')
+                ->cascadeOnDelete();
+
+            // Metode pembayaran
+            $table->enum('metode_pembayaran', [
+                'cod',
+                'transfer',
+            ]);
+
+            // Jumlah pembayaran
+            $table->decimal('amount', 12, 2);
+
+            // Status pembayaran
+            $table->enum('status', [
+                'pending',
+                'dibayar',
+                'gagal',
+            ])->default('pending');
+
+            // Bukti pembayaran jika transfer
+            $table->string('bukti_pembayaran')
+                ->nullable();
+
+            // Waktu pembayaran
+            $table->timestamp('paid_at')
+                ->nullable();
+
             $table->timestamps();
         });
     }
 
     /**
-     * Batalkan migration (rollback).
+     * Reverse the migrations.
      */
     public function down(): void
     {

@@ -7,28 +7,40 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Jalankan migration untuk membuat tabel orders.
+     * Run the migrations.
      */
     public function up(): void
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+
+            // Pelanggan yang membuat pesanan
             $table->foreignId('user_id')
-                  ->constrained('users')
-                  ->onDelete('cascade');         // pelanggan
-            $table->foreignId('kasir_id')
-                  ->constrained('users')
-                  ->onDelete('cascade');         // kasir yang melayani
-            $table->enum('status', ['pending', 'diproses', 'selesai', 'dibatalkan'])
-                  ->default('pending');
-            $table->decimal('total_harga', 12, 2)->default(0);
-            $table->text('catatan')->nullable();
+                ->constrained('users')
+                ->cascadeOnDelete();
+
+            // Data pelanggan saat checkout
+            $table->string('nama_lengkap');
+            $table->string('no_whatsapp');
+            $table->text('alamat');
+
+            // Total seluruh pesanan
+            $table->decimal('total_harga', 12, 2);
+
+            // Status pesanan
+            $table->enum('status', [
+                'pending',
+                'diproses',
+                'selesai',
+                'dibatalkan',
+            ])->default('pending');
+
             $table->timestamps();
         });
     }
 
     /**
-     * Batalkan migration (rollback).
+     * Reverse the migrations.
      */
     public function down(): void
     {

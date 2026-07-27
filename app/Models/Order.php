@@ -10,38 +10,24 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'kasir_id',
-        'status',
+        'nama_lengkap',
+        'no_whatsapp',
+        'alamat',
         'total_harga',
-        'catatan',
+        'status',
     ];
 
     protected $casts = [
-        'total_harga' => 'decimal:2',
+        'total_harga' => 'integer',
     ];
 
-    /** Relasi ke pelanggan */
-    public function pelanggan()
+    public function items()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->hasMany(OrderItem::class);
     }
 
-    /** Relasi ke kasir */
-    public function kasir()
-    {
-        return $this->belongsTo(User::class, 'kasir_id');
-    }
-
-    /** Relasi ke item-item dalam order */
-    public function orderItems()
-    {
-        return $this->hasMany(OrderItem::class, 'order_id');
-    }
-
-    /** Relasi ke pembayaran */
     public function payment()
     {
-        return $this->hasOne(Payment::class, 'order_id');
+        return $this->hasOne(Payment::class);
     }
 }

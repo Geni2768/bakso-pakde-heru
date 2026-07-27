@@ -1,209 +1,272 @@
-@extends('layouts.guest')
+<!DOCTYPE html>
+<html lang="id">
 
-@section('content')
+<head>
 
-<div class="text-center mb-8">
+    <meta charset="UTF-8">
 
-    <img src="{{ asset('images/logo.png') }}"
-         class="w-24 mx-auto mb-5">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <h1 class="text-4xl font-extrabold text-red-700">
+    <title>Login - Bakso Pakde Heru</title>
 
-        Selamat Datang
+    @vite([
+        'resources/css/app.css',
+        'resources/js/app.js'
+    ])
 
-    </h1>
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
 
-    <p class="text-gray-500 mt-2">
+    <style>
 
-        Login untuk melanjutkan ke Bakso Pakde Heru
+        body {
+            background: #fffaf3;
+            min-height: 100vh;
+        }
 
-    </p>
+        .login-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-</div>
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            background: white;
+            border-radius: 12px;
+            padding: 35px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+        }
 
-@if(session('status'))
+        .logo {
+            text-align: center;
+            color: #d62828;
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
 
-<div class="mb-5 rounded-xl bg-green-100 text-green-700 p-4">
+        .subtitle {
+            text-align: center;
+            color: #777;
+            font-size: 13px;
+            margin-bottom: 30px;
+        }
 
-    {{ session('status') }}
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+        }
 
-</div>
+        .form-control {
+            padding: 11px;
+            font-size: 13px;
+        }
 
-@endif
+        .btn-login {
+            width: 100%;
+            background: #d62828;
+            border: none;
+            color: white;
+            padding: 11px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
 
-@if ($errors->any())
+        .btn-login:hover {
+            background: #b71c1c;
+        }
 
-<div class="mb-5 rounded-xl bg-red-100 border border-red-200 p-4">
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+        }
 
-    <ul class="text-red-600 text-sm list-disc ml-5">
+        .register-link a {
+            color: #d62828;
+            font-weight: 600;
+            text-decoration: none;
+        }
 
-        @foreach($errors->all() as $error)
+        .back-home {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 12px;
+        }
 
-            <li>{{ $error }}</li>
+        .back-home a {
+            color: #555;
+            text-decoration: none;
+        }
 
-        @endforeach
+    </style>
 
-    </ul>
+</head>
 
-</div>
 
-@endif
+<body>
 
-<form method="POST" action="{{ route('login') }}">
 
-    @csrf
+<div class="login-wrapper">
 
-    {{-- EMAIL --}}
+    <div class="login-card">
 
-    <div class="mb-5">
 
-        <label class="block font-semibold mb-2">
-
-            Email
-
-        </label>
-
-        <div class="relative">
-
-            <i class="fa-solid fa-envelope absolute left-4 top-4 text-gray-400"></i>
-
-            <input
-                name="email"
-                type="email"
-                value="{{ old('email') }}"
-                required
-                autofocus
-                class="input-login w-full pl-11"
-                placeholder="Masukkan Email">
-
+        <div class="logo">
+            🍜 Bakso Pakde Heru
         </div>
 
-    </div>
 
-    {{-- PASSWORD --}}
-
-    <div class="mb-3">
-
-        <label class="block font-semibold mb-2">
-
-            Password
-
-        </label>
-
-        <div class="relative">
-
-            <i class="fa-solid fa-lock absolute left-4 top-4 text-gray-400"></i>
-
-            <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                class="input-login w-full pl-11 pr-12"
-                placeholder="Masukkan Password">
-
-            <button
-                type="button"
-                onclick="togglePassword()"
-                class="absolute right-4 top-4">
-
-                <i id="eyeIcon"
-                   class="fa-solid fa-eye text-gray-500"></i>
-
-            </button>
-
+        <div class="subtitle">
+            Silakan login untuk melanjutkan
         </div>
 
-    </div>
 
-    <div class="flex justify-between items-center mb-6">
+        @if(session('status'))
 
-        <label class="flex items-center gap-2">
-
-            <input
-                type="checkbox"
-                name="remember">
-
-            <span class="text-sm">
-
-                Ingat Saya
-
-            </span>
-
-        </label>
-
-        @if(Route::has('password.request'))
-
-        <a
-            href="{{ route('password.request') }}"
-            class="text-red-600 text-sm font-semibold">
-
-            Lupa Password?
-
-        </a>
+            <div class="alert alert-success">
+                {{ session('status') }}
+            </div>
 
         @endif
 
+
+        @if($errors->any())
+
+            <div class="alert alert-danger">
+
+                <ul class="mb-0">
+
+                    @foreach($errors->all() as $error)
+
+                        <li>
+                            {{ $error }}
+                        </li>
+
+                    @endforeach
+
+                </ul>
+
+            </div>
+
+        @endif
+
+
+        <form
+            method="POST"
+            action="{{ route('login') }}"
+        >
+
+            @csrf
+
+
+            <div class="mb-3">
+
+                <label
+                    class="form-label"
+                    for="email"
+                >
+                    Email
+                </label>
+
+
+                <input
+                    id="email"
+                    type="email"
+                    name="email"
+                    class="form-control"
+                    value="{{ old('email') }}"
+                    required
+                    autofocus
+                >
+
+            </div>
+
+
+            <div class="mb-3">
+
+                <label
+                    class="form-label"
+                    for="password"
+                >
+                    Password
+                </label>
+
+
+                <input
+                    id="password"
+                    type="password"
+                    name="password"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+
+            <div class="mb-3 form-check">
+
+                <input
+                    type="checkbox"
+                    name="remember"
+                    class="form-check-input"
+                    id="remember"
+                >
+
+                <label
+                    class="form-check-label"
+                    for="remember"
+                >
+                    Ingat saya
+                </label>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn-login"
+            >
+                Login
+            </button>
+
+
+        </form>
+
+
+        <div class="register-link">
+
+            Belum punya akun?
+
+            <a href="{{ route('register') }}">
+                Register sekarang
+            </a>
+
+        </div>
+
+
+        <div class="back-home">
+
+            <a href="{{ route('home') }}">
+                ← Kembali ke Beranda
+            </a>
+
+        </div>
+
+
     </div>
 
-    <button
-        class="btn-login w-full py-4 rounded-xl text-white font-bold text-lg">
-
-        <i class="fa-solid fa-right-to-bracket mr-2"></i>
-
-        Login
-
-    </button>
-
-</form>
-
-<div class="mt-8 text-center">
-
-    Belum punya akun?
-
-    <a href="{{ route('register') }}"
-       class="font-bold text-red-600">
-
-        Daftar Sekarang
-
-    </a>
-
 </div>
 
-<div class="mt-8 text-center">
 
-    <p class="text-gray-400 text-sm">
+</body>
 
-        © {{ date('Y') }} Bakso Pakde Heru
-
-    </p>
-
-</div>
-
-<script>
-
-function togglePassword(){
-
-    let password=document.getElementById("password");
-
-    let eye=document.getElementById("eyeIcon");
-
-    if(password.type==="password"){
-
-        password.type="text";
-
-        eye.classList.replace("fa-eye","fa-eye-slash");
-
-    }else{
-
-        password.type="password";
-
-        eye.classList.replace("fa-eye-slash","fa-eye");
-
-    }
-
-}
-
-</script>
-
-@endsection
+</html>

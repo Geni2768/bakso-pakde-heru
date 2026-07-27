@@ -7,27 +7,35 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Jalankan migration untuk membuat tabel order_items.
+     * Run the migrations.
      */
     public function up(): void
     {
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
+
+            // Relasi ke pesanan
             $table->foreignId('order_id')
-                  ->constrained('orders')
-                  ->onDelete('cascade');
+                ->constrained('orders')
+                ->cascadeOnDelete();
+
+            // Relasi ke menu
             $table->foreignId('menu_id')
-                  ->constrained('menus')
-                  ->onDelete('cascade');
-            $table->integer('qty');
-            $table->decimal('harga_satuan', 10, 2);  // snapshot harga saat order
-            $table->decimal('subtotal', 12, 2);       // qty * harga_satuan
+                ->constrained('menus')
+                ->restrictOnDelete();
+
+            // Jumlah menu yang dipesan
+            $table->unsignedInteger('jumlah');
+
+            // Harga menu saat transaksi
+            $table->decimal('harga', 12, 2);
+
             $table->timestamps();
         });
     }
 
     /**
-     * Batalkan migration (rollback).
+     * Reverse the migrations.
      */
     public function down(): void
     {
