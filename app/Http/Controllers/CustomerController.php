@@ -11,9 +11,6 @@ use Illuminate\Support\Facades\DB;
 
 class CustomerController extends Controller
 {
-    /**
-     * Halaman utama.
-     */
     public function index()
     {
         $menus = Menu::with('kategori')
@@ -24,10 +21,6 @@ class CustomerController extends Controller
         return view('home', compact('menus'));
     }
 
-
-    /**
-     * Halaman semua menu.
-     */
     public function menu(Request $request)
     {
         $search = $request->input('search');
@@ -43,23 +36,38 @@ class CustomerController extends Controller
             ->latest()
             ->get();
 
+        /*
+        |--------------------------------------------------------------------------
+        | RESPONSE AJAX
+        |--------------------------------------------------------------------------
+        | Jika request berasal dari JavaScript,
+        | kirim data menu dalam format JSON.
+        */
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'menus' => $menus->map(function ($menu) {
+                    return [
+                        'id' => $menu->id,
+                        'nama_menu' => $menu->nama_menu,
+                        'deskripsi' => $menu->deskripsi,
+                        'harga' => $menu->harga,
+                        'gambar' => $menu->gambar,
+                        'kategori' => $menu->kategori
+                            ? $menu->kategori->nama_kategori
+                            : '-',
+                    ];
+                }),
+            ]);
+        }
+
         return view(
             'menu.index',
-            compact(
-                'menus',
-                'search'
-            )
+            compact('menus', 'search')
         );
     }
 
-
-    /**
-     * Tambah menu ke keranjang.
-     *
-     * Mendukung:
-     * 1. Request biasa dari form.
-     * 2. Request AJAX menggunakan fetch().
-     */
     public function addCart(Request $request, $id)
     {
         $menu = Menu::findOrFail($id);
@@ -79,30 +87,14 @@ class CustomerController extends Controller
 
         session()->put('cart', $cart);
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | RESPONSE AJAX
-        |--------------------------------------------------------------------------
-        */
-
         if ($request->expectsJson()) {
             return response()->json([
                 'success' => true,
-                'message' =>
-                    $menu->nama_menu .
+                'message' => $menu->nama_menu .
                     ' berhasil ditambahkan ke keranjang.',
-                'cart_count' =>
-                    collect($cart)->sum('qty'),
+                'cart_count' => collect($cart)->sum('qty'),
             ]);
         }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | RESPONSE FORM BIASA
-        |--------------------------------------------------------------------------
-        */
 
         return back()->with(
             'success',
@@ -111,10 +103,6 @@ class CustomerController extends Controller
         );
     }
 
-
-    /**
-     * Halaman keranjang.
-     */
     public function cart()
     {
         $cart = session()->get('cart', []);
@@ -123,29 +111,13 @@ class CustomerController extends Controller
             return $item['harga'] * $item['qty'];
         });
 
-        return view(
-            'cart',
-            compact(
-                'cart',
-                'total'
-            )
-        );
+        return view('cart', compact('cart', 'total'));
     }
 
-
-    /**
-     * Update jumlah item di keranjang.
-     */
-    public function updateCart(
-        Request $request,
-        $id
-    ) {
+    public function updateCart(Request $request, $id)
+    {
         $request->validate([
-            'qty' => [
-                'required',
-                'integer',
-                'min:1',
-            ],
+            'qty' => 'required|integer|min:1',
         ]);
 
         $cart = session()->get('cart', []);
@@ -157,13 +129,9 @@ class CustomerController extends Controller
             );
         }
 
-        $cart[$id]['qty'] =
-            $request->qty;
+        $cart[$id]['qty'] = $request->qty;
 
-        session()->put(
-            'cart',
-            $cart
-        );
+        session()->put('cart', $cart);
 
         return back()->with(
             'success',
@@ -171,10 +139,6 @@ class CustomerController extends Controller
         );
     }
 
-
-    /**
-     * Hapus item dari keranjang.
-     */
     public function deleteCart($id)
     {
         $cart = session()->get('cart', []);
@@ -183,10 +147,7 @@ class CustomerController extends Controller
             unset($cart[$id]);
         }
 
-        session()->put(
-            'cart',
-            $cart
-        );
+        session()->put('cart', $cart);
 
         return back()->with(
             'success',
@@ -194,23 +155,13 @@ class CustomerController extends Controller
         );
     }
 
-
-    /**
-     * Halaman Pesanan Saya.
-     *
-     * Hanya menampilkan pesanan
-     * milik pelanggan yang sedang login.
-     */
     public function orders()
     {
         $orders = Order::with([
             'items.menu',
             'payment',
         ])
-            ->where(
-                'user_id',
-                auth()->id()
-            )
+            ->where('user_id', auth()->id())
             ->latest()
             ->get();
 
@@ -220,43 +171,25 @@ class CustomerController extends Controller
         );
     }
 
+    public function checkout(Request $request)
+    {
+        if (!auth()->check()) {
+            return redirect()
+                ->route('login')
+                ->with(
+                    'error',
+                    'Silakan login terlebih dahulu untuk melakukan checkout.'
+                );
+        }
 
-    /**
-     * Checkout dan membuat order.
-     */
-    public function checkout(
-        Request $request
-    ) {
         $request->validate([
-            'nama_lengkap' => [
-                'required',
-                'string',
-                'max:255',
-            ],
-
-            'no_whatsapp' => [
-                'required',
-                'string',
-                'max:20',
-            ],
-
-            'alamat' => [
-                'required',
-                'string',
-            ],
-
-            'metode_pembayaran' => [
-                'required',
-                'in:cod,transfer',
-            ],
+            'nama_lengkap' => 'required|string|max:255',
+            'no_whatsapp' => 'required|string|max:20',
+            'alamat' => 'required|string',
+            'metode_pembayaran' => 'required',
         ]);
 
-
-        $cart = session()->get(
-            'cart',
-            []
-        );
-
+        $cart = session()->get('cart', []);
 
         if (empty($cart)) {
             return back()->with(
@@ -265,62 +198,32 @@ class CustomerController extends Controller
             );
         }
 
-
-        $total = collect($cart)->sum(
-            function ($item) {
-                return $item['harga'] *
-                    $item['qty'];
-            }
-        );
-
+        $total = collect($cart)->sum(function ($item) {
+            return $item['harga'] * $item['qty'];
+        });
 
         try {
-
             $order = DB::transaction(
                 function () use (
                     $request,
                     $cart,
                     $total
                 ) {
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | 1. BUAT ORDER
-                    |--------------------------------------------------------------------------
-                    */
-
                     $order = Order::create([
-                        'user_id' =>
-                            auth()->id(),
-
+                        'user_id' => auth()->id(),
                         'nama_lengkap' =>
                             $request->nama_lengkap,
-
                         'no_whatsapp' =>
                             $request->no_whatsapp,
-
                         'alamat' =>
                             $request->alamat,
-
                         'total_harga' =>
                             $total,
-
                         'status' =>
                             'pending',
                     ]);
 
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | 2. SIMPAN ORDER ITEMS
-                    |--------------------------------------------------------------------------
-                    */
-
-                    foreach (
-                        $cart
-                        as $menuId => $item
-                    ) {
-
+                    foreach ($cart as $menuId => $item) {
                         OrderItem::create([
                             'order_id' =>
                                 $order->id,
@@ -328,65 +231,53 @@ class CustomerController extends Controller
                             'menu_id' =>
                                 $menuId,
 
-                            'jumlah' =>
+                            'qty' =>
                                 $item['qty'],
 
-                            'harga' =>
+                            'harga_satuan' =>
                                 $item['harga'],
+
+                            'subtotal' =>
+                                $item['harga']
+                                * $item['qty'],
                         ]);
-
                     }
-
 
                     /*
                     |--------------------------------------------------------------------------
-                    | 3. SIMPAN PAYMENT
+                    | DATABASE PAYMENT
                     |--------------------------------------------------------------------------
+                    | Nilai yang diizinkan:
+                    | tunai, transfer, qris
                     */
+
+                    $metode = strtolower(
+                        $request->metode_pembayaran
+                    );
+
+                    if ($metode === 'cod') {
+                        $metode = 'tunai';
+                    }
 
                     Payment::create([
                         'order_id' =>
                             $order->id,
 
                         'metode_pembayaran' =>
-                            $request
-                                ->metode_pembayaran,
+                            $metode,
 
-                        'amount' =>
+                        'jumlah_bayar' =>
                             $total,
-
-                        'status' =>
-                            'pending',
                     ]);
 
-
                     return $order;
-
                 }
             );
 
-
-            /*
-            |--------------------------------------------------------------------------
-            | 4. KOSONGKAN KERANJANG
-            |--------------------------------------------------------------------------
-            */
-
-            session()->forget(
-                'cart'
-            );
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | 5. REDIRECT PESANAN
-            |--------------------------------------------------------------------------
-            */
+            session()->forget('cart');
 
             return redirect()
-                ->route(
-                    'customer.orders'
-                )
+                ->route('customer.orders')
                 ->with(
                     'success',
                     'Pesanan #' .
@@ -394,17 +285,14 @@ class CustomerController extends Controller
                     ' berhasil dibuat.'
                 );
 
-
         } catch (\Throwable $e) {
-
             return back()
                 ->withInput()
                 ->with(
                     'error',
-                    'Pesanan gagal dibuat. Silakan coba lagi.'
+                    'Gagal membuat pesanan: ' .
+                    $e->getMessage()
                 );
-
         }
     }
 }
-

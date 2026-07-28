@@ -1,128 +1,90 @@
-# Bakso Pakde Heru
+# 🍜 Bakso Pakde Heru
 
 ## Sistem Informasi Pemesanan, Kasir, dan Manajemen Menu Berbasis Web
 
-Bakso Pakde Heru adalah aplikasi web berbasis Laravel yang dikembangkan sebagai Proyek Akhir Semester (UAS). Sistem ini dibuat untuk membantu digitalisasi proses usaha kuliner, mulai dari pengelolaan menu dan kategori, pemesanan pelanggan, hingga pengelolaan pesanan oleh kasir dan admin.
+Bakso Pakde Heru adalah aplikasi web berbasis Laravel yang dikembangkan sebagai Proyek Akhir Semester (UAS) mata kuliah Pemrograman Web II.
 
-## Anggota Kelompok
+Sistem ini dirancang untuk membantu pelanggan melihat menu, mencari makanan, menambahkan menu ke keranjang, melakukan checkout, dan melihat riwayat pesanan. Aplikasi juga menyediakan halaman khusus untuk Admin dan Kasir agar proses pengelolaan menu, kategori, pembayaran, dan pesanan dapat dilakukan dengan lebih mudah.
+
+Aplikasi menerapkan sistem autentikasi dan otorisasi berdasarkan role menggunakan Laravel Middleware. Setiap pengguna memiliki hak akses yang berbeda sesuai dengan perannya.
+
+
+## 👥 Anggota Kelompok
 
 1. Maria Geni Anita Mare
 2. Novriadi Naibahi
 3. Theobaldus S. Ngaban
 
-## Tujuan
+
+## 🎯 Tujuan
 
 Aplikasi ini bertujuan untuk:
 
 - Memudahkan pelanggan melihat dan mencari menu.
-- Memudahkan pelanggan melakukan pemesanan.
+- Memudahkan pelanggan melakukan pemesanan makanan.
 - Menyediakan fitur keranjang dan checkout.
 - Membantu kasir mengelola pesanan pelanggan.
-- Membantu admin mengelola data sistem.
+- Membantu admin mengelola menu dan kategori.
 - Menerapkan autentikasi dan hak akses berdasarkan role.
+- Menerapkan konsep Laravel dalam pengembangan aplikasi web.
 
-## Role Pengguna
 
-### Admin
-- Mengelola sistem.
-- Mengelola pengguna.
-- Mengelola menu dan kategori.
-- Mengakses fitur administrasi sistem.
 
-### Kasir
-- Melihat pesanan pelanggan.
-- Mengelola pesanan.
-- Memperbarui status pesanan.
+## 👤 Role Pengguna
 
-### Pelanggan
-- Melihat menu.
-- Mencari menu.
+Aplikasi memiliki tiga jenis pengguna:
+
+### 1. Admin
+
+Admin memiliki akses untuk:
+
+- Melihat Dashboard Admin.
+- Melihat jumlah menu, kategori, dan pesanan.
+- Menambah, melihat, mengubah, dan menghapus menu.
+- Menambah dan menghapus kategori.
+- Melihat seluruh pesanan pelanggan.
+- Mengubah status pesanan.
+
+### 2. Kasir
+
+Kasir memiliki akses untuk:
+
+- Melihat Dashboard Kasir.
+- Melihat data pesanan.
+- Mengelola dan memperbarui status pesanan.
+
+### 3. Pelanggan
+
+Pelanggan memiliki akses untuk:
+
+- Registrasi akun.
+- Login dan logout.
+- Melihat daftar menu.
+- Mencari menu secara otomatis.
 - Menambahkan menu ke keranjang.
+- Mengubah jumlah menu pada keranjang.
+- Menghapus menu dari keranjang.
 - Melakukan checkout.
-- Melihat pesanan dan status pesanan.
+- Memilih metode pembayaran.
+- Melihat riwayat pesanan.
 
-## Fitur Utama
+## 🔐 Autentikasi dan Otorisasi
 
-### Autentikasi
-- Login
-- Register
-- Logout
-- Multi-role
-- Proteksi akses berdasarkan role
+Aplikasi menggunakan Laravel Authentication untuk proses:
 
-### Manajemen Menu
-- Menampilkan menu
-- Menambahkan menu
-- Mengedit menu
-- Menghapus menu
-- Melihat detail menu
-- Pencarian menu
-- Kategori menu
-- Upload gambar menu
+- Registrasi.
+- Login.
+- Logout.
+- Pengelolaan session pengguna.
 
-### Manajemen Kategori
-- Menampilkan kategori
-- Menambahkan kategori
-- Mengedit kategori
-- Menghapus kategori
-- Menampilkan jumlah menu berdasarkan kategori
-- CRUD menggunakan AJAX / Fetch API
+Pembatasan hak akses dilakukan di sisi server menggunakan Laravel Middleware.
 
-### Pemesanan Pelanggan
-- Melihat menu
-- Menambahkan menu ke keranjang
-- Melihat keranjang
-- Menghapus item keranjang
-- Checkout
-- Melihat riwayat pesanan
+Role yang digunakan:
 
-### Dashboard Kasir
-- Melihat daftar pesanan pelanggan
-- Melihat detail pesanan
-- Melihat informasi pembayaran
-- Memperbarui status pesanan
-
-Status pesanan yang tersedia:
-
-- Pending
-- Diproses
-- Dikirim
-- Selesai
-- Dibatalkan
-
-## Alur Sistem
-
-Pelanggan
-→ Melihat Menu
-→ Memilih Menu
-→ Menambahkan ke Keranjang
-→ Checkout
-→ Pesanan Dibuat
-→ Kasir Memproses Pesanan
-→ Status Pesanan Diperbarui
-→ Pesanan Selesai
-
-## Teknologi yang Digunakan
-
-- Laravel
-- PHP
-- MySQL / SQLite
-- Blade Template
-- Tailwind CSS
-- JavaScript
-- AJAX / Fetch API
-- Spatie Laravel Permission
-- Vite
-
-
-## Struktur Sistem
-
-- `app/` - Model, Controller, dan komponen aplikasi
-- `database/` - Migration, Seeder, dan Factory
-- `resources/views/` - Tampilan halaman aplikasi
-- `routes/web.php` - Routing aplikasi
-- `public/` - Asset publik
-- `storage/` - Penyimpanan file dan gambar
+```text
+admin
+kasir
+pelanggan
 
 ## Hak Cipta
 

@@ -20,13 +20,8 @@ class RoleMiddleware
 
         $user = auth()->user();
 
-        /*
-        |--------------------------------------------------------------------------
-        | CEK ROLE SPATIE PERMISSION
-        |--------------------------------------------------------------------------
-        */
-
-        if (!$user->hasRole($role)) {
+        // Cek role dari kolom users.role
+        if ($user->role !== $role) {
             abort(403, 'Anda tidak memiliki akses ke halaman ini.');
         }
 

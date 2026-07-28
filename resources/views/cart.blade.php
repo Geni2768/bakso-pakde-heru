@@ -1,747 +1,157 @@
 @extends('layouts.app')
 
-@section('title', 'Keranjang - Bakso Pakde Heru')
+@section('title', 'Keranjang & Checkout - Bakso Pakde Heru')
 
 @section('content')
 
-<style>
-    .cart-page {
-        padding: 30px 0 50px;
-    }
+<div class="container py-5">
 
-    .page-title {
-        font-size: 28px;
-        font-weight: 800;
-        color: #292929;
-        margin-bottom: 5px;
-    }
+    <div class="text-center mb-5">
+        <h1 class="fw-bold">🛒 Keranjang & Checkout</h1>
+        <p class="text-muted">
+            Periksa pesanan dan lengkapi data pengiriman.
+        </p>
+    </div>
 
-    .page-subtitle {
-        font-size: 13px;
-        color: #777;
-        margin-bottom: 25px;
-    }
-
-    .cart-card {
-        background: #ffffff;
-        border: 1px solid #eeeeee;
-        border-radius: 10px;
-        overflow: hidden;
-    }
-
-    .cart-header {
-        padding: 16px 20px;
-        border-bottom: 1px solid #eeeeee;
-        font-size: 15px;
-        font-weight: 700;
-    }
-
-    .cart-item {
-        padding: 15px 20px;
-        border-bottom: 1px solid #eeeeee;
-    }
-
-    .cart-item:last-child {
-        border-bottom: none;
-    }
-
-    .cart-image {
-        width: 75px;
-        height: 75px;
-        object-fit: cover;
-        border-radius: 8px;
-        background: #fff3df;
-    }
-
-    .cart-no-image {
-        width: 75px;
-        height: 75px;
-        border-radius: 8px;
-        background: #fff3df;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 25px;
-    }
-
-    .cart-name {
-        font-size: 14px;
-        font-weight: 700;
-        margin-bottom: 5px;
-    }
-
-    .cart-price {
-        font-size: 12px;
-        color: #777;
-    }
-
-    .cart-subtotal {
-        font-size: 14px;
-        font-weight: 700;
-        color: #d62828;
-    }
-
-    .quantity-form {
-        display: flex;
-        align-items: center;
-    }
-
-    .quantity-input {
-        width: 55px;
-        height: 32px;
-        border: 1px solid #dddddd;
-        border-radius: 5px;
-        text-align: center;
-        font-size: 12px;
-    }
-
-    .btn-update {
-        height: 32px;
-        margin-left: 5px;
-        padding: 0 10px;
-        border: 1px solid #d62828;
-        background: white;
-        color: #d62828;
-        border-radius: 5px;
-        font-size: 11px;
-        font-weight: 600;
-    }
-
-    .btn-update:hover {
-        background: #d62828;
-        color: white;
-    }
-
-    .btn-delete {
-        border: none;
-        background: transparent;
-        color: #dc3545;
-        font-size: 12px;
-        padding: 5px;
-    }
-
-    .btn-delete:hover {
-        color: #a71d2a;
-    }
-
-    .summary-card {
-        background: #ffffff;
-        border: 1px solid #eeeeee;
-        border-radius: 10px;
-        padding: 20px;
-        position: sticky;
-        top: 90px;
-    }
-
-    .summary-title {
-        font-size: 16px;
-        font-weight: 700;
-        margin-bottom: 20px;
-    }
-
-    .summary-row {
-        display: flex;
-        justify-content: space-between;
-        font-size: 13px;
-        margin-bottom: 12px;
-    }
-
-    .summary-total {
-        border-top: 1px solid #eeeeee;
-        padding-top: 15px;
-        margin-top: 15px;
-        display: flex;
-        justify-content: space-between;
-        font-size: 16px;
-        font-weight: 800;
-        color: #d62828;
-    }
-
-    .btn-checkout {
-        width: 100%;
-        background: #d62828;
-        border: none;
-        color: white;
-        padding: 11px;
-        border-radius: 6px;
-        font-size: 13px;
-        font-weight: 700;
-        margin-top: 20px;
-    }
-
-    .btn-checkout:hover {
-        background: #b71c1c;
-        color: white;
-    }
-
-    .btn-back {
-        width: 100%;
-        background: white;
-        border: 1px solid #d62828;
-        color: #d62828;
-        padding: 10px;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 600;
-        margin-top: 10px;
-    }
-
-    .btn-back:hover {
-        background: #d62828;
-        color: white;
-    }
-
-    .empty-cart {
-        background: white;
-        border: 1px solid #eeeeee;
-        border-radius: 10px;
-        padding: 60px 20px;
-        text-align: center;
-    }
-
-    .empty-icon {
-        font-size: 50px;
-        margin-bottom: 10px;
-    }
-
-    .empty-title {
-        font-size: 18px;
-        font-weight: 700;
-        margin-bottom: 5px;
-    }
-
-    .empty-text {
-        color: #777;
-        font-size: 13px;
-        margin-bottom: 20px;
-    }
-
-    @media (max-width: 768px) {
-
-        .cart-item {
-            padding: 15px;
-        }
-
-        .cart-image,
-        .cart-no-image {
-            width: 60px;
-            height: 60px;
-        }
-
-        .cart-subtotal {
-            margin-top: 10px;
-        }
-
-        .summary-card {
-            position: static;
-            margin-top: 20px;
-        }
-    }
-</style>
-
-
-<div class="cart-page">
-
-    <div class="container">
-
-
-        {{-- HEADER --}}
-
-        <div class="text-center">
-
-            <h1 class="page-title">
-                Keranjang Saya
-            </h1>
-
-            <p class="page-subtitle">
-                Periksa pesanan kamu sebelum melakukan checkout.
-            </p>
-
+    {{-- PESAN ERROR --}}
+    @if (session('error'))
+        <div class="alert alert-danger">
+            <strong>Checkout gagal:</strong>
+            {{ session('error') }}
         </div>
+    @endif
 
+    {{-- PESAN SUKSES --}}
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
 
-        {{-- JIKA KERANJANG KOSONG --}}
+    {{-- JIKA KERANJANG KOSONG --}}
+    @if (empty($cart))
 
-        @if(empty($cart))
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center py-5">
 
-            <div class="empty-cart">
-
-                <div class="empty-icon">
+                <div style="font-size: 60px;">
                     🛒
                 </div>
 
-                <div class="empty-title">
+                <h3 class="mt-3">
                     Keranjang Masih Kosong
-                </div>
+                </h3>
 
-                <div class="empty-text">
+                <p class="text-muted">
                     Yuk pilih menu favorit kamu terlebih dahulu.
-                </div>
+                </p>
 
                 <a
                     href="{{ route('customer.menu') }}"
-                    class="btn btn-danger-custom"
+                    class="btn btn-danger"
                 >
-                    🍜 Lihat Menu
+                    Lihat Menu
                 </a>
 
             </div>
+        </div>
 
+    @else
 
-        @else
+        <div class="row g-4">
 
+            {{-- DAFTAR PESANAN --}}
+            <div class="col-lg-7">
 
-            <div class="row g-4">
+                <div class="card border-0 shadow-sm">
 
-
-                {{-- DAFTAR ITEM --}}
-
-                <div class="col-lg-8">
-
-                    <div class="cart-card">
-
-                        <div class="cart-header">
-                            🛒 Daftar Pesanan
-                        </div>
-
-
-                        @foreach($cart as $id => $item)
-
-                            <div class="cart-item">
-
-                                <div class="row align-items-center g-3">
-
-
-                                    {{-- GAMBAR --}}
-
-                                    <div class="col-auto">
-
-                                        @if(!empty($item['gambar']))
-
-                                            <img
-                                                src="{{ asset(
-                                                    'storage/' .
-                                                    $item['gambar']
-                                                ) }}"
-                                                alt="{{ $item['nama'] }}"
-                                                class="cart-image"
-                                            >
-
-                                        @else
-
-                                            <div class="cart-no-image">
-                                                🍜
-                                            </div>
-
-                                        @endif
-
-                                    </div>
-
-
-                                    {{-- NAMA DAN HARGA --}}
-
-                                    <div class="col">
-
-                                        <div class="cart-name">
-                                            {{ $item['nama'] }}
-                                        </div>
-
-                                        <div class="cart-price">
-
-                                            Rp{{ number_format(
-                                                $item['harga'],
-                                                0,
-                                                ',',
-                                                '.'
-                                            ) }}
-
-                                            / item
-
-                                        </div>
-
-                                    </div>
-
-
-                                    {{-- JUMLAH --}}
-
-                                    <div class="col-md-auto">
-
-                                        <form
-                                            action="{{ route(
-                                                'cart.update',
-                                                $id
-                                            ) }}"
-                                            method="POST"
-                                            class="quantity-form"
-                                        >
-
-                                            @csrf
-
-                                            @method('PATCH')
-
-                                            <input
-                                                type="number"
-                                                name="qty"
-                                                value="{{ $item['qty'] }}"
-                                                min="1"
-                                                class="quantity-input"
-                                            >
-
-                                            <button
-                                                type="submit"
-                                                class="btn-update"
-                                            >
-                                                Update
-                                            </button>
-
-                                        </form>
-
-                                    </div>
-
-
-                                    {{-- SUBTOTAL --}}
-
-                                    <div class="col-md-auto">
-
-                                        <div class="cart-subtotal">
-
-                                            Rp{{ number_format(
-                                                $item['harga']
-                                                *
-                                                $item['qty'],
-                                                0,
-                                                ',',
-                                                '.'
-                                            ) }}
-
-                                        </div>
-
-                                    </div>
-
-
-                                    {{-- HAPUS --}}
-
-                                    <div class="col-auto">
-
-                                        <form
-                                            action="{{ route(
-                                                'cart.delete',
-                                                $id
-                                            ) }}"
-                                            method="POST"
-                                        >
-
-                                            @csrf
-
-                                            @method('DELETE')
-
-                                            <button
-                                                type="submit"
-                                                class="btn-delete"
-                                                onclick="
-                                                    return confirm(
-                                                        'Hapus menu ini dari keranjang?'
-                                                    )
-                                                "
-                                            >
-                                                🗑️ Hapus
-                                            </button>
-
-                                        </form>
-
-                                    </div>
-
-
-                                </div>
-
-                            </div>
-
-                        @endforeach
-
+                    <div class="card-header bg-danger text-white">
+                        <h4 class="mb-0">
+                            🍜 Detail Pesanan
+                        </h4>
                     </div>
 
-                </div>
+                    <div class="card-body">
 
+                        @foreach ($cart as $id => $item)
 
-                {{-- RINGKASAN --}}
+                            <div class="row align-items-center border-bottom py-3">
 
-                <div class="col-lg-4">
+                                <div class="col-md-5">
 
-                    <div class="summary-card">
+                                    <h5 class="mb-1">
+                                        {{ $item['nama'] }}
+                                    </h5>
 
-                        <div class="summary-title">
-                            Ringkasan Pesanan
-                        </div>
-
-
-                        @php
-
-                            $totalItem = collect(
-                                $cart
-                            )->sum('qty');
-
-                        @endphp
-
-
-                        <div class="summary-row">
-
-                            <span>
-                                Total Item
-                            </span>
-
-                            <strong>
-                                {{ $totalItem }}
-                            </strong>
-
-                        </div>
-
-
-                        <div class="summary-row">
-
-                            <span>
-                                Jumlah Menu
-                            </span>
-
-                            <strong>
-                                {{ count($cart) }}
-                            </strong>
-
-                        </div>
-
-
-                        <div class="summary-total">
-
-                            <span>
-                                Total
-                            </span>
-
-                            <span>
-                                Rp{{ number_format(
-                                    $total,
-                                    0,
-                                    ',',
-                                    '.'
-                                ) }}
-                            </span>
-
-                        </div>
-
-
-                        {{-- CHECKOUT --}}
-
-                        @auth
-
-                            {{-- PAKAI KOLOM ROLE LANGSUNG, TIDAK PAKAI hasRole() --}}
-
-                            @if(auth()->user()->role === 'pelanggan')
-
-                                <a
-                                    href="#checkout"
-                                    class="btn btn-checkout"
-                                    onclick="
-                                        document
-                                        .getElementById(
-                                            'checkout'
-                                        )
-                                        .scrollIntoView({
-                                            behavior: 'smooth'
-                                        });
-                                        return false;
-                                    "
-                                >
-                                    💳 Lanjut Checkout
-                                </a>
-
-                            @else
-
-                                <div class="alert alert-warning mt-3 mb-0">
-
-                                    Hanya pelanggan yang dapat
-                                    melakukan checkout.
+                                    <small class="text-muted">
+                                        Harga:
+                                        Rp{{ number_format($item['harga'], 0, ',', '.') }}
+                                    </small>
 
                                 </div>
 
-                            @endif
-
-                        @else
-
-                            <a
-                                href="{{ route('login') }}"
-                                class="btn btn-checkout"
-                            >
-                                🔐 Login untuk Checkout
-                            </a>
-
-                        @endauth
-
-
-                        <a
-                            href="{{ route('customer.menu') }}"
-                            class="btn btn-back"
-                        >
-                            ← Kembali ke Menu
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            {{-- CHECKOUT FORM --}}
-
-            @auth
-
-                {{-- PAKAI KOLOM ROLE LANGSUNG, TIDAK PAKAI hasRole() --}}
-
-                @if(auth()->user()->role === 'pelanggan')
-
-                    <div
-                        id="checkout"
-                        class="row mt-4"
-                    >
-
-                        <div class="col-lg-8">
-
-                            <div class="cart-card">
-
-                                <div class="cart-header">
-                                    📦 Data Pengiriman & Pembayaran
-                                </div>
-
-
-                                <div class="p-4">
+                                <div class="col-md-3 mt-2 mt-md-0">
 
                                     <form
-                                        action="{{ route(
-                                            'checkout'
-                                        ) }}"
+                                        action="{{ route('cart.update', $id) }}"
                                         method="POST"
                                     >
 
                                         @csrf
 
+                                        @method('PATCH')
 
-                                        {{-- NAMA --}}
+                                        <label class="form-label">
+                                            Jumlah
+                                        </label>
 
-                                        <div class="mb-3">
+                                        <input
+                                            type="number"
+                                            name="qty"
+                                            value="{{ $item['qty'] }}"
+                                            min="1"
+                                            class="form-control"
+                                            onchange="this.form.submit()"
+                                        >
 
-                                            <label
-                                                class="form-label"
-                                                style="
-                                                    font-size: 13px;
-                                                    font-weight: 600;
-                                                "
-                                            >
-                                                Nama Lengkap
-                                            </label>
+                                    </form>
 
-                                            <input
-                                                type="text"
-                                                name="nama_lengkap"
-                                                class="form-control"
-                                                value="{{ auth()->user()->name }}"
-                                                required
-                                            >
+                                </div>
 
-                                        </div>
+                                <div class="col-md-3 text-md-end mt-3 mt-md-0">
 
+                                    <strong class="text-danger">
 
-                                        {{-- WHATSAPP --}}
+                                        Rp{{
+                                            number_format(
+                                                $item['harga'] * $item['qty'],
+                                                0,
+                                                ',',
+                                                '.'
+                                            )
+                                        }}
 
-                                        <div class="mb-3">
+                                    </strong>
 
-                                            <label
-                                                class="form-label"
-                                                style="
-                                                    font-size: 13px;
-                                                    font-weight: 600;
-                                                "
-                                            >
-                                                Nomor WhatsApp
-                                            </label>
+                                </div>
 
-                                            <input
-                                                type="text"
-                                                name="no_whatsapp"
-                                                class="form-control"
-                                                placeholder="Contoh: 081234567890"
-                                                required
-                                            >
+                                <div class="col-md-1 text-md-end mt-3 mt-md-0">
 
-                                        </div>
+                                    <form
+                                        action="{{ route('cart.delete', $id) }}"
+                                        method="POST"
+                                    >
 
+                                        @csrf
 
-                                        {{-- ALAMAT --}}
-
-                                        <div class="mb-3">
-
-                                            <label
-                                                class="form-label"
-                                                style="
-                                                    font-size: 13px;
-                                                    font-weight: 600;
-                                                "
-                                            >
-                                                Alamat Pengiriman
-                                            </label>
-
-                                            <textarea
-                                                name="alamat"
-                                                class="form-control"
-                                                rows="3"
-                                                placeholder="Masukkan alamat lengkap..."
-                                                required
-                                            ></textarea>
-
-                                        </div>
-
-
-                                        {{-- PEMBAYARAN --}}
-
-                                        <div class="mb-3">
-
-                                            <label
-                                                class="form-label"
-                                                style="
-                                                    font-size: 13px;
-                                                    font-weight: 600;
-                                                "
-                                            >
-                                                Metode Pembayaran
-                                            </label>
-
-                                            <select
-                                                name="metode_pembayaran"
-                                                class="form-select"
-                                                required
-                                            >
-
-                                                <option value="">
-                                                    Pilih pembayaran
-                                                </option>
-
-                                                <option value="cod">
-                                                    COD
-                                                </option>
-
-                                                <option value="transfer">
-                                                    Transfer Bank
-                                                </option>
-
-                                            </select>
-
-                                        </div>
-
-
-                                        {{-- SUBMIT --}}
+                                        @method('DELETE')
 
                                         <button
                                             type="submit"
-                                            class="btn btn-danger-custom w-100"
+                                            class="btn btn-sm btn-outline-danger"
+                                            onclick="return confirm('Hapus menu ini dari keranjang?')"
                                         >
-                                            ✅ Buat Pesanan
+                                            🗑️
                                         </button>
 
                                     </form>
@@ -750,18 +160,277 @@
 
                             </div>
 
+                        @endforeach
+
+                        <div class="d-flex justify-content-between align-items-center pt-4">
+
+                            <h4 class="mb-0">
+                                Total Pesanan
+                            </h4>
+
+                            <h3 class="text-danger mb-0">
+
+                                Rp{{ number_format($total, 0, ',', '.') }}
+
+                            </h3>
+
                         </div>
 
                     </div>
 
-                @endif
+                </div>
 
-            @endauth
+            </div>
 
-        @endif
 
-    </div>
+            {{-- FORM CHECKOUT --}}
+            <div class="col-lg-5">
+
+                <div class="card border-0 shadow-sm">
+
+                    <div class="card-header bg-dark text-white">
+
+                        <h4 class="mb-0">
+                            Checkout Pesanan
+                        </h4>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        @auth
+
+                            <div class="alert alert-light border">
+
+                                <strong>
+                                    Pesanan atas nama:
+                                </strong>
+
+                                <br>
+
+                                {{ auth()->user()->name }}
+
+                                <br>
+
+                                <small class="text-muted">
+
+                                    {{ auth()->user()->email }}
+
+                                </small>
+
+                            </div>
+
+                        @endauth
+
+
+                        <form
+                            action="{{ route('checkout') }}"
+                            method="POST"
+                        >
+
+                            @csrf
+
+
+                            {{-- NAMA --}}
+                            <div class="mb-3">
+
+                                <label class="form-label">
+
+                                    Nama Lengkap
+
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="nama_lengkap"
+                                    class="form-control @error('nama_lengkap') is-invalid @enderror"
+                                    value="{{ old('nama_lengkap', auth()->user()->name ?? '') }}"
+                                    required
+                                >
+
+                                @error('nama_lengkap')
+
+                                    <div class="invalid-feedback">
+
+                                        {{ $message }}
+
+                                    </div>
+
+                                @enderror
+
+                            </div>
+
+
+                            {{-- WHATSAPP --}}
+                            <div class="mb-3">
+
+                                <label class="form-label">
+
+                                    No. WhatsApp
+
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="no_whatsapp"
+                                    class="form-control @error('no_whatsapp') is-invalid @enderror"
+                                    value="{{ old('no_whatsapp') }}"
+                                    placeholder="Contoh: 081234567890"
+                                    required
+                                >
+
+                                @error('no_whatsapp')
+
+                                    <div class="invalid-feedback">
+
+                                        {{ $message }}
+
+                                    </div>
+
+                                @enderror
+
+                            </div>
+
+
+                            {{-- ALAMAT --}}
+                            <div class="mb-3">
+
+                                <label class="form-label">
+
+                                    Alamat
+
+                                </label>
+
+                                <textarea
+                                    name="alamat"
+                                    rows="3"
+                                    class="form-control @error('alamat') is-invalid @enderror"
+                                    placeholder="Masukkan alamat lengkap"
+                                    required
+                                >{{ old('alamat') }}</textarea>
+
+                                @error('alamat')
+
+                                    <div class="invalid-feedback">
+
+                                        {{ $message }}
+
+                                    </div>
+
+                                @enderror
+
+                            </div>
+
+
+                            {{-- PEMBAYARAN --}}
+                            <div class="mb-4">
+
+                                <label class="form-label">
+
+                                    Metode Pembayaran
+
+                                </label>
+
+                                <select
+                                    name="metode_pembayaran"
+                                    class="form-select @error('metode_pembayaran') is-invalid @enderror"
+                                    required
+                                >
+
+                                    <option value="">
+
+                                        -- Pilih Metode Pembayaran --
+
+                                    </option>
+
+                                    {{-- DATABASE MENERIMA: tunai --}}
+                                    <option
+                                        value="tunai"
+                                        {{ old('metode_pembayaran') === 'tunai' ? 'selected' : '' }}
+                                    >
+
+                                        Tunai / COD
+
+                                    </option>
+
+                                    {{-- DATABASE MENERIMA: transfer --}}
+                                    <option
+                                        value="transfer"
+                                        {{ old('metode_pembayaran') === 'transfer' ? 'selected' : '' }}
+                                    >
+
+                                        Transfer
+
+                                    </option>
+
+                                    {{-- DATABASE MENERIMA: qris --}}
+                                    <option
+                                        value="qris"
+                                        {{ old('metode_pembayaran') === 'qris' ? 'selected' : '' }}
+                                    >
+
+                                        QRIS
+
+                                    </option>
+
+                                </select>
+
+                                @error('metode_pembayaran')
+
+                                    <div class="invalid-feedback">
+
+                                        {{ $message }}
+
+                                    </div>
+
+                                @enderror
+
+                            </div>
+
+
+                            {{-- TOTAL --}}
+                            <div class="alert alert-warning">
+
+                                <div class="d-flex justify-content-between">
+
+                                    <strong>
+                                        Total Bayar
+                                    </strong>
+
+                                    <strong>
+
+                                        Rp{{ number_format($total, 0, ',', '.') }}
+
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+
+                            {{-- TOMBOL --}}
+                            <button
+                                type="submit"
+                                class="btn btn-danger w-100 py-2"
+                            >
+
+                                🍜 Buat Pesanan
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    @endif
 
 </div>
 
 @endsection
+

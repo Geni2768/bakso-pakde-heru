@@ -20,18 +20,23 @@ class AdminOrderController extends Controller
             ->latest()
             ->get();
 
-        return view('admin.orders.index', compact('orders'));
+        return view(
+            'admin.orders.index',
+            compact('orders')
+        );
     }
 
     /**
      * Mengubah status pesanan.
      */
-    public function updateStatus(Request $request, Order $order)
-    {
+    public function updateStatus(
+        Request $request,
+        Order $order
+    ) {
         $request->validate([
             'status' => [
                 'required',
-                'in:pending,diproses,dikirim,selesai,dibatalkan',
+                'in:pending,diproses,selesai,dibatalkan',
             ],
         ]);
 
@@ -43,7 +48,10 @@ class AdminOrderController extends Controller
             ->route('admin.orders.index')
             ->with(
                 'success',
-                'Status pesanan #' . $order->id . ' berhasil diperbarui.'
+                'Status pesanan #' .
+                $order->id .
+                ' berhasil diperbarui.'
             );
     }
 }
+

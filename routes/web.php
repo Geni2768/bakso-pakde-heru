@@ -1,295 +1,254 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\MenuController;
-use App\Http\Controllers\AdminOrderController;
-
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 
-use App\Models\User;
-use App\Models\Menu;
-use App\Models\Kategori;
-use App\Models\Order;
-use App\Models\Payment;
-
 /*
 |--------------------------------------------------------------------------
-| HALAMAN CUSTOMER / PELANGGAN
+| HALAMAN PELANGGAN
 |--------------------------------------------------------------------------
 */
 
-// Beranda
-Route::get('/', [
-    CustomerController::class,
-    'index'
-])->name('home');
+Route::get('/', [CustomerController::class, 'index'])
+    ->name('home');
 
-// Daftar Menu
-Route::get('/menu', [
-    CustomerController::class,
-    'menu'
-])->name('customer.menu');
+Route::get('/menu', [CustomerController::class, 'menu'])
+    ->name('customer.menu');
 
-// Tambah Menu ke Keranjang
-Route::post('/cart/add/{id}', [
-    CustomerController::class,
-    'addCart'
-])->name('cart.add');
+Route::post('/cart/add/{id}', [CustomerController::class, 'addCart'])
+    ->name('cart.add');
 
-// Keranjang
-Route::get('/cart', [
-    CustomerController::class,
-    'cart'
-])->name('cart');
+Route::get('/cart', [CustomerController::class, 'cart'])
+    ->name('cart');
 
-// Update jumlah keranjang
-Route::patch('/cart/{id}', [
-    CustomerController::class,
-    'updateCart'
-])->name('cart.update');
+Route::patch('/cart/{id}', [CustomerController::class, 'updateCart'])
+    ->name('cart.update');
 
-// Hapus dari Keranjang
-Route::delete('/cart/{id}', [
-    CustomerController::class,
-    'deleteCart'
-])->name('cart.delete');
+Route::delete('/cart/{id}', [CustomerController::class, 'deleteCart'])
+    ->name('cart.delete');
+
+Route::post('/checkout', [CustomerController::class, 'checkout'])
+    ->middleware('auth')
+    ->name('checkout');
+
+Route::get('/pesanan-saya', [CustomerController::class, 'orders'])
+    ->middleware('auth')
+    ->name('customer.orders');
 
 
 /*
 |--------------------------------------------------------------------------
-| AUTH
+| LOGIN DAN REGISTER
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('guest')->group(function () {
+Route::get('/login', [AuthenticatedSessionController::class, 'create'])
+    ->middleware('guest')
+    ->name('login');
 
-    // Login
-    Route::get('/login', [
-        AuthenticatedSessionController::class,
-        'create'
-    ])->name('login');
+Route::post('/login', [AuthenticatedSessionController::class, 'store'])
+    ->middleware('guest');
 
-    Route::post('/login', [
-        AuthenticatedSessionController::class,
-        'store'
-    ]);
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('logout');
 
-    // Register
-    Route::get('/register', [
-        RegisteredUserController::class,
-        'create'
-    ])->name('register');
+Route::get('/register', [RegisteredUserController::class, 'create'])
+    ->middleware('guest')
+    ->name('register');
 
-    Route::post('/register', [
-        RegisteredUserController::class,
-        'store'
-    ]);
+Route::post('/register', [RegisteredUserController::class, 'store'])
+    ->middleware('guest');
+
+
+/*
+|--------------------------------------------------------------------------
+| REDIRECT DASHBOARD BERDASARKAN ROLE
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/dashboard', function () {
+    $user = Auth::user();
+
+    if ($user->role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    }
+
+    if ($user->role === 'kasir') {
+        return redirect()->route('kasir.dashboard');
+    }
+
+    return redirect()->route('pelanggan.dashboard');
+})->middleware('auth')->name('dashboard');
+
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+
+    Route::get('/admin/dashboard', function () {
+        return view('admin.dashboard');
+    })->name('admin.dashboard');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | KELOLA MENU
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/menu-admin', [MenuController::class, 'index'])
+        ->name('menu-admin.index');
+
+    Route::get('/menu-admin/create', [MenuController::class, 'create'])
+        ->name('menu-admin.create');
+
+    Route::post('/menu-admin', [MenuController::class, 'store'])
+        ->name('menu-admin.store');
+
+    Route::get('/menu-admin/{menu_admin}', [MenuController::class, 'show'])
+        ->name('menu-admin.show');
+
+    Route::get('/menu-admin/{menu_admin}/edit', [MenuController::class, 'edit'])
+        ->name('menu-admin.edit');
+
+    Route::put('/menu-admin/{menu_admin}', [MenuController::class, 'update'])
+        ->name('menu-admin.update');
+
+    Route::delete('/menu-admin/{menu_admin}', [MenuController::class, 'destroy'])
+        ->name('menu-admin.destroy');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | KELOLA KATEGORI
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/kategori', [KategoriController::class, 'index'])
+        ->name('kategori.index');
+
+    Route::get('/kategori/create', [KategoriController::class, 'create'])
+        ->name('kategori.create');
+
+    Route::post('/kategori', [KategoriController::class, 'store'])
+        ->name('kategori.store');
+
+    Route::get('/kategori/{kategori}', [KategoriController::class, 'show'])
+        ->name('kategori.show');
+
+    Route::get('/kategori/{kategori}/edit', [KategoriController::class, 'edit'])
+        ->name('kategori.edit');
+
+    Route::put('/kategori/{kategori}', [KategoriController::class, 'update'])
+        ->name('kategori.update');
+
+    Route::delete('/kategori/{kategori}', [KategoriController::class, 'destroy'])
+        ->name('kategori.destroy');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | KELOLA PESANAN
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/admin/orders', function () {
+        $orders = \App\Models\Order::with([
+            'user',
+            'items.menu',
+            'payment',
+        ])->latest()->get();
+
+        return view('admin.orders.index', compact('orders'));
+    })->name('admin.orders.index');
+
+    Route::patch(
+        '/admin/orders/{order}/status',
+        function (
+            \Illuminate\Http\Request $request,
+            \App\Models\Order $order
+        ) {
+            $request->validate([
+                'status' => [
+                    'required',
+                    'in:pending,diproses,siap,selesai,dibatalkan',
+                ],
+            ]);
+
+            $order->update([
+                'status' => $request->status,
+            ]);
+
+            return back()->with(
+                'success',
+                'Status pesanan berhasil diperbarui.'
+            );
+        }
+    )->name('admin.orders.updateStatus');
 
 });
 
 
 /*
 |--------------------------------------------------------------------------
-| USER LOGIN
+| PELANGGAN
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'role:pelanggan'])->group(function () {
 
-    /*
-    |--------------------------------------------------------------------------
-    | DASHBOARD REDIRECT
-    |--------------------------------------------------------------------------
-    */
+    Route::get('/pelanggan/dashboard', function () {
+        return view('pelanggan.dashboard');
+    })->name('pelanggan.dashboard');
 
-    Route::get('/dashboard', function () {
-
-        $user = auth()->user();
-
-        if ($user->role === 'admin') {
-            return redirect()->route('admin.dashboard');
-        }
-
-        if ($user->role === 'kasir') {
-            return redirect()->route('kasir.dashboard');
-        }
-
-        return redirect()->route('pelanggan.dashboard');
-
-    })->name('dashboard');
+});
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | CHECKOUT
-    |--------------------------------------------------------------------------
-    */
-
-    Route::post('/checkout', [
-        CustomerController::class,
-        'checkout'
-    ])->name('checkout');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | PESANAN SAYA - PELANGGAN
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/pesanan-saya', function () {
-
-        $orders = Order::with([
-            'items.menu',
-            'payment'
-        ])
-        ->where('user_id', auth()->id())
-        ->latest()
-        ->get();
-
-        return view(
-            'pelanggan.orders',
-            compact('orders')
-        );
-
-    })->name('customer.orders');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | ADMIN
-    |--------------------------------------------------------------------------
-    */
-
-    Route::middleware('role:admin')->group(function () {
-
-        // Dashboard Admin
-        Route::get('/admin/dashboard', function () {
-
-            $totalMenu = Menu::count();
-
-            $totalKategori = Kategori::count();
-
-            $totalOrder = Order::count();
-
-            $totalIncome = Payment::sum('amount');
-
-            $totalCustomer = User::where(
-                'role',
-                'pelanggan'
-            )->count();
-
-            return view(
-                'admin.dashboard',
-                compact(
-                    'totalMenu',
-                    'totalKategori',
-                    'totalOrder',
-                    'totalIncome',
-                    'totalCustomer'
-                )
-            );
-
-        })->name('admin.dashboard');
-
-
-        // CRUD Kategori
-        Route::resource(
-            'kategori',
-            KategoriController::class
-        );
-
-
-        // CRUD Menu
-        Route::resource(
-            'menu-admin',
-            MenuController::class
-        );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | KELOLA PESANAN ADMIN
-        |--------------------------------------------------------------------------
-        */
-
-        Route::get('/admin/orders', [
-            AdminOrderController::class,
-            'index'
-        ])->name('admin.orders.index');
-
-        Route::patch('/admin/orders/{order}/status', [
-            AdminOrderController::class,
-            'updateStatus'
-        ])->name('admin.orders.updateStatus');
-
-    });
-
-
-
-
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | PELANGGAN
-    |--------------------------------------------------------------------------
-    */
-
-    Route::middleware('role:pelanggan')->group(function () {
-
-        Route::view(
-            '/pelanggan/dashboard',
-            'pelanggan.dashboard'
-        )->name('pelanggan.dashboard');
-
-    });
-    
 /*
 |--------------------------------------------------------------------------
 | KASIR
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('role:kasir')->group(function () {
+Route::middleware(['auth', 'role:kasir'])->group(function () {
 
-    // Dashboard Kasir
-    Route::get(
-        '/kasir/dashboard',
-        [
-            \App\Http\Controllers\Kasir\DashboardController::class,
-            'index'
-        ]
-    )->name('kasir.dashboard');
+    Route::get('/kasir/dashboard', function () {
+        return view('kasir.dashboard');
+    })->name('kasir.dashboard');
 
-
-    // Update Status Pesanan oleh Kasir
     Route::patch(
         '/kasir/orders/{order}/status',
-        [
-            \App\Http\Controllers\Kasir\DashboardController::class,
-            'updateStatus'
-        ]
+        function (
+            \Illuminate\Http\Request $request,
+            \App\Models\Order $order
+        ) {
+            $request->validate([
+                'status' => [
+                    'required',
+                    'in:pending,diproses,siap,selesai,dibatalkan',
+                ],
+            ]);
+
+            $order->update([
+                'status' => $request->status,
+            ]);
+
+            return back()->with(
+                'success',
+                'Status pesanan berhasil diperbarui.'
+            );
+        }
     )->name('kasir.orders.updateStatus');
 
 });
-
-    /*
-    |--------------------------------------------------------------------------
-    | LOGOUT
-    |--------------------------------------------------------------------------
-    */
-
-    Route::post('/logout', [
-        AuthenticatedSessionController::class,
-        'destroy'
-    ])->name('logout');
-
-});
-
-
-require __DIR__ . '/auth.php';

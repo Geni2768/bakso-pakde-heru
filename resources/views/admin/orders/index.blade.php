@@ -1,211 +1,442 @@
 @extends('layouts.app')
 
-@section('title', 'Kelola Pesanan - Admin')
+@section('title', 'Kelola Pesanan - Bakso Pakde Heru')
 
 @section('content')
 
 <div class="container py-4">
 
-    <div class="mb-4">
-        <h1 class="fw-bold">Kelola Pesanan</h1>
-        <p class="text-muted">
-            Lihat dan kelola seluruh pesanan pelanggan.
-        </p>
+    {{-- HEADER --}}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">📦 Kelola Pesanan</h2>
+            <p class="text-muted mb-0">
+                Lihat dan kelola seluruh pesanan pelanggan.
+            </p>
+        </div>
+
+        <a href="{{ route('admin.dashboard') }}"
+           class="btn btn-outline-primary">
+            ← Dashboard
+        </a>
     </div>
 
+
+    {{-- PESAN SUKSES --}}
     @if(session('success'))
-        <div class="alert alert-success">
+        <div class="alert alert-success alert-dismissible fade show">
             {{ session('success') }}
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
         </div>
     @endif
 
+
+    {{-- PESAN ERROR --}}
     @if(session('error'))
-        <div class="alert alert-danger">
+        <div class="alert alert-danger alert-dismissible fade show">
             {{ session('error') }}
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
         </div>
     @endif
 
-    @if($orders->count() > 0)
 
+    {{-- JIKA BELUM ADA PESANAN --}}
+    @if($orders->isEmpty())
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center py-5">
+
+                <div style="font-size: 70px;">
+                    📦
+                </div>
+
+                <h4 class="fw-bold mt-3">
+                    Belum Ada Pesanan
+                </h4>
+
+                <p class="text-muted">
+                    Belum ada pesanan yang masuk dari pelanggan.
+                </p>
+
+                <a href="{{ route('customer.menu') }}"
+                   class="btn btn-primary">
+                    Lihat Menu
+                </a>
+
+            </div>
+        </div>
+
+    @else
+
+        {{-- JUMLAH PESANAN --}}
+        <div class="alert alert-info mb-4">
+            <strong>{{ $orders->count() }}</strong>
+            pesanan ditemukan.
+        </div>
+
+
+        {{-- DAFTAR PESANAN --}}
         @foreach($orders as $order)
 
             @php
-                $status = strtolower($order->status ?? 'pending');
+
+                $statusClass = match($order->status) {
+
+                    'pending' =>
+                        'bg-warning text-dark',
+
+                    'diproses' =>
+                        'bg-info text-dark',
+
+                    'siap' =>
+                        'bg-primary',
+
+                    'selesai' =>
+                        'bg-success',
+
+                    'dibatalkan' =>
+                        'bg-danger',
+
+                    default =>
+                        'bg-secondary',
+                };
+
             @endphp
 
-            <div class="card mb-4 shadow-sm">
 
-                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <div class="card border-0 shadow-sm mb-4">
 
-                    <div>
-                        <strong>
-                            Pesanan #{{ $order->id }}
-                        </strong>
+                {{-- HEADER PESANAN --}}
+                <div class="card-header bg-white py-3">
 
-                        <div class="text-muted small">
-                            {{ $order->created_at->format('d M Y, H:i') }}
+                    <div class="row align-items-center">
+
+                        <div class="col-md-6">
+
+                            <h5 class="fw-bold mb-1">
+                                🧾 Pesanan #{{ $order->id }}
+                            </h5>
+
+                            <small class="text-muted">
+
+                                @if($order->created_at)
+
+                                    {{ $order->created_at->format('d M Y, H:i') }}
+
+                                @endif
+
+                            </small>
+
                         </div>
-                    </div>
 
-                    <span class="badge bg-secondary">
-                        {{ ucfirst($status) }}
-                    </span>
+
+                        <div class="col-md-6 text-md-end mt-2 mt-md-0">
+
+                            <span class="badge {{ $statusClass }} px-3 py-2">
+
+                                {{ ucfirst($order->status) }}
+
+                            </span>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
+
+                {{-- ISI PESANAN --}}
                 <div class="card-body">
 
-                    <h5 class="fw-bold mb-3">
-                        Informasi Pelanggan
-                    </h5>
+                    <div class="row g-4">
 
-                    <p class="mb-1">
-                        <strong>Nama:</strong>
-                        {{ $order->nama_lengkap }}
-                    </p>
 
-                    <p class="mb-1">
-                        <strong>WhatsApp:</strong>
-                        {{ $order->no_whatsapp }}
-                    </p>
+                        {{-- INFORMASI PELANGGAN --}}
+                        <div class="col-lg-5">
 
-                    <p class="mb-4">
-                        <strong>Alamat:</strong>
-                        {{ $order->alamat }}
-                    </p>
+                            <div class="border rounded p-3 h-100">
 
-                    <h5 class="fw-bold mb-3">
-                        Item Pesanan
-                    </h5>
+                                <h6 class="fw-bold mb-3">
+                                    👤 Informasi Pelanggan
+                                </h6>
 
-                    <div class="table-responsive">
+                                <div class="mb-2">
 
-                        <table class="table table-bordered">
+                                    <strong>Nama:</strong><br>
 
-                            <thead>
-                                <tr>
-                                    <th>Menu</th>
-                                    <th>Jumlah</th>
-                                    <th>Harga</th>
-                                    <th>Subtotal</th>
-                                </tr>
-                            </thead>
+                                    {{ $order->nama_lengkap ?? '-' }}
 
-                            <tbody>
+                                </div>
 
-                                @foreach($order->items as $item)
+                                <div class="mb-2">
 
-                                    <tr>
+                                    <strong>No. WhatsApp:</strong><br>
 
-                                        <td>
-                                            {{ $item->menu->nama_menu ?? 'Menu telah dihapus' }}
-                                        </td>
+                                    {{ $order->no_whatsapp ?? '-' }}
 
-                                        <td>
-                                            {{ $item->jumlah }}
-                                        </td>
+                                </div>
 
-                                        <td>
-                                            Rp{{ number_format($item->harga, 0, ',', '.') }}
-                                        </td>
+                                <div>
 
-                                        <td>
-                                            Rp{{ number_format($item->harga * $item->jumlah, 0, ',', '.') }}
-                                        </td>
+                                    <strong>Alamat:</strong><br>
 
-                                    </tr>
+                                    {{ $order->alamat ?? '-' }}
 
-                                @endforeach
+                                </div>
 
-                            </tbody>
-
-                        </table>
-
-                    </div>
-
-                    <div class="border-top pt-3 mt-3">
-
-                        <p>
-                            <strong>Metode Pembayaran:</strong>
-                            {{ ucfirst($order->payment->metode_pembayaran ?? '-') }}
-                        </p>
-
-                        <p>
-                            <strong>Status Pembayaran:</strong>
-                            {{ ucfirst($order->payment->status ?? 'pending') }}
-                        </p>
-
-                    </div>
-
-                </div>
-
-                <div class="card-footer bg-white">
-
-                    <div class="d-flex justify-content-between align-items-center">
-
-                        <div>
-
-                            <div class="text-muted">
-                                Total Pesanan
-                            </div>
-
-                            <div class="fs-4 fw-bold text-danger">
-                                Rp{{ number_format($order->total_harga, 0, ',', '.') }}
                             </div>
 
                         </div>
 
+
+                        {{-- DETAIL PESANAN --}}
+                        <div class="col-lg-7">
+
+                            <div class="border rounded p-3">
+
+                                <h6 class="fw-bold mb-3">
+                                    🍜 Detail Pesanan
+                                </h6>
+
+
+                                @forelse($order->items as $item)
+
+                                    <div class="d-flex justify-content-between
+                                                align-items-center
+                                                border-bottom
+                                                py-2">
+
+                                        <div>
+
+                                            <div class="fw-bold">
+
+                                                {{ $item->menu->nama_menu ?? 'Menu' }}
+
+                                            </div>
+
+                                            <small class="text-muted">
+
+                                                {{ $item->jumlah }}
+
+                                                x
+
+                                                Rp{{ number_format($item->harga, 0, ',', '.') }}
+
+                                            </small>
+
+                                        </div>
+
+
+                                        <strong>
+
+                                            Rp{{ number_format(
+                                                $item->jumlah * $item->harga,
+                                                0,
+                                                ',',
+                                                '.'
+                                            ) }}
+
+                                        </strong>
+
+                                    </div>
+
+                                @empty
+
+                                    <p class="text-muted mb-0">
+                                        Tidak ada item pesanan.
+                                    </p>
+
+                                @endforelse
+
+
+                                {{-- TOTAL --}}
+                                <div class="d-flex justify-content-between
+                                            align-items-center
+                                            mt-3">
+
+                                    <strong>
+                                        Total Pesanan
+                                    </strong>
+
+                                    <strong class="text-primary fs-5">
+
+                                        Rp{{ number_format(
+                                            $order->total_harga,
+                                            0,
+                                            ',',
+                                            '.'
+                                        ) }}
+
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    {{-- PEMBAYARAN --}}
+                    @if($order->payment)
+
+                        <div class="border rounded p-3 mt-4">
+
+                            <h6 class="fw-bold mb-3">
+                                💳 Pembayaran
+                            </h6>
+
+                            <div class="row">
+
+                                <div class="col-md-6">
+
+                                    <strong>
+                                        Metode Pembayaran
+                                    </strong>
+
+                                    <p class="mb-0">
+
+                                        {{ strtoupper(
+                                            $order->payment->metode_pembayaran
+                                        ) }}
+
+                                    </p>
+
+                                </div>
+
+
+                                <div class="col-md-6">
+
+                                    <strong>
+                                        Status Pembayaran
+                                    </strong>
+
+                                    <p class="mb-0">
+
+                                        <span class="badge bg-secondary">
+
+                                            {{ ucfirst(
+                                                $order->payment->status
+                                            ) }}
+
+                                        </span>
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    @endif
+
+
+                    {{-- UPDATE STATUS --}}
+                    <div class="border rounded p-3 mt-4 bg-light">
+
+                        <h6 class="fw-bold mb-3">
+                            🔄 Update Status Pesanan
+                        </h6>
+
                         <form
-                            action="{{ route('admin.orders.update', $order->id) }}"
+                            action="{{ route(
+                                'admin.orders.updateStatus',
+                                $order->id
+                            ) }}"
                             method="POST"
-                            class="d-flex gap-2"
                         >
 
                             @csrf
 
                             @method('PATCH')
 
-                            <select
-                                name="status"
-                                class="form-select"
-                            >
 
-                                <option
-                                    value="pending"
-                                    {{ $status === 'pending' ? 'selected' : '' }}
-                                >
-                                    Menunggu
-                                </option>
+                            <div class="row g-2 align-items-end">
 
-                                <option
-                                    value="diproses"
-                                    {{ $status === 'diproses' ? 'selected' : '' }}
-                                >
-                                    Diproses
-                                </option>
+                                <div class="col-md-9">
 
-                                <option
-                                    value="selesai"
-                                    {{ $status === 'selesai' ? 'selected' : '' }}
-                                >
-                                    Selesai
-                                </option>
+                                    <label class="form-label">
+                                        Status Pesanan
+                                    </label>
 
-                                <option
-                                    value="dibatalkan"
-                                    {{ $status === 'dibatalkan' ? 'selected' : '' }}
-                                >
-                                    Dibatalkan
-                                </option>
+                                    <select
+                                        name="status"
+                                        class="form-select"
+                                        required
+                                    >
 
-                            </select>
+                                        <option
+                                            value="pending"
+                                            {{ $order->status === 'pending'
+                                                ? 'selected'
+                                                : '' }}
+                                        >
+                                            Pending
+                                        </option>
 
-                            <button
-                                type="submit"
-                                class="btn btn-danger"
-                            >
-                                Update Status
-                            </button>
+                                        <option
+                                            value="diproses"
+                                            {{ $order->status === 'diproses'
+                                                ? 'selected'
+                                                : '' }}
+                                        >
+                                            Diproses
+                                        </option>
+
+                                        <option
+                                            value="siap"
+                                            {{ $order->status === 'siap'
+                                                ? 'selected'
+                                                : '' }}
+                                        >
+                                            Siap Diambil / Dikirim
+                                        </option>
+
+                                        <option
+                                            value="selesai"
+                                            {{ $order->status === 'selesai'
+                                                ? 'selected'
+                                                : '' }}
+                                        >
+                                            Selesai
+                                        </option>
+
+                                        <option
+                                            value="dibatalkan"
+                                            {{ $order->status === 'dibatalkan'
+                                                ? 'selected'
+                                                : '' }}
+                                        >
+                                            Dibatalkan
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+
+                                <div class="col-md-3">
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary w-100"
+                                    >
+                                        💾 Update Status
+                                    </button>
+
+                                </div>
+
+                            </div>
 
                         </form>
 
@@ -216,24 +447,6 @@
             </div>
 
         @endforeach
-
-    @else
-
-        <div class="text-center py-5">
-
-            <div style="font-size: 50px;">
-                📦
-            </div>
-
-            <h4 class="fw-bold mt-3">
-                Belum Ada Pesanan
-            </h4>
-
-            <p class="text-muted">
-                Saat ini belum ada pesanan dari pelanggan.
-            </p>
-
-        </div>
 
     @endif
 
