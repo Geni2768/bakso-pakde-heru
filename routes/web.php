@@ -223,9 +223,33 @@ Route::middleware(['auth', 'role:pelanggan'])->group(function () {
 
 Route::middleware(['auth', 'role:kasir'])->group(function () {
 
-    Route::get('/kasir/dashboard', function () {
-        return view('kasir.dashboard');
-    })->name('kasir.dashboard');
+Route::get('/kasir/dashboard', function () {
+    $orders = \App\Models\Order::with(['items.menu'])
+        ->latest()
+        ->get();
+
+    $totalPesanan = $orders->count();
+
+    $pending = $orders->where('status', 'pending')->count();
+
+    $diproses = $orders->where('status', 'diproses')->count();
+
+    $dikirim = $orders->where('status', 'dikirim')->count();
+
+    $selesai = $orders->where('status', 'selesai')->count();
+
+    $dibatalkan = $orders->where('status', 'dibatalkan')->count();
+
+    return view('kasir.dashboard', compact(
+        'orders',
+        'totalPesanan',
+        'pending',
+        'diproses',
+        'dikirim',
+        'selesai',
+        'dibatalkan'
+    ));
+})->name('kasir.dashboard');
 
     Route::patch(
         '/kasir/orders/{order}/status',

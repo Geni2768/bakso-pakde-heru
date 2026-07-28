@@ -294,7 +294,7 @@
                 </div>
 
                 <div class="stat-number">
-                    {{ $totalOrder ?? 0 }}
+                    {{ $totalPesanan ?? 0 }}
                 </div>
 
             </div>
@@ -507,10 +507,10 @@
 
                             <div class="item-qty">
 
-                                {{ $item->jumlah ?? 0 }}
+                                {{ $item->qty ?? 0 }}
                                 x
                                 Rp{{ number_format(
-                                    $item->harga ?? 0,
+                                    $item->harga_satuan ?? 0,
                                     0,
                                     ',',
                                     '.'
@@ -524,8 +524,8 @@
                         <div class="item-price">
 
                             Rp{{ number_format(
-                                ($item->harga ?? 0) *
-                                ($item->jumlah ?? 0),
+                                ($item->harga_satuan ?? 0) *
+                                ($item->qty ?? 0),
                                 0,
                                 ',',
                                 '.'
