@@ -8,15 +8,18 @@ use App\Models\OrderItem;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class CustomerController extends Controller
 {
     public function index()
     {
-        $menus = Menu::with('kategori')
-            ->latest()
-            ->limit(4)
-            ->get();
+        $menus = Cache::remember('home_menus', 300, function () {
+            return Menu::with('kategori')
+                ->latest()
+                ->limit(4)
+                ->get();
+        });
 
         return view('home', compact('menus'));
     }
@@ -25,23 +28,25 @@ class CustomerController extends Controller
     {
         $search = $request->input('search');
 
-        $menus = Menu::with('kategori')
-            ->when($search, function ($query) use ($search) {
-                $query->where(
-                    'nama_menu',
-                    'like',
-                    '%' . $search . '%'
-                );
-            })
-            ->latest()
-            ->get();
+        $cacheKey = 'menus_' . md5($search ?? '');
+
+        $menus = Cache::remember($cacheKey, 300, function () use ($search) {
+            return Menu::with('kategori')
+                ->when($search, function ($query) use ($search) {
+                    $query->where(
+                        'nama_menu',
+                        'like',
+                        '%' . $search . '%'
+                    );
+                })
+                ->latest()
+                ->get();
+        });
 
         /*
         |--------------------------------------------------------------------------
         | RESPONSE AJAX
         |--------------------------------------------------------------------------
-        | Jika request berasal dari JavaScript,
-        | kirim data menu dalam format JSON.
         */
 
         if ($request->expectsJson()) {
@@ -211,45 +216,22 @@ class CustomerController extends Controller
                 ) {
                     $order = Order::create([
                         'user_id' => auth()->id(),
-                        'nama_lengkap' =>
-                            $request->nama_lengkap,
-                        'no_whatsapp' =>
-                            $request->no_whatsapp,
-                        'alamat' =>
-                            $request->alamat,
-                        'total_harga' =>
-                            $total,
-                        'status' =>
-                            'pending',
+                        'nama_lengkap' => $request->nama_lengkap,
+                        'no_whatsapp' => $request->no_whatsapp,
+                        'alamat' => $request->alamat,
+                        'total_harga' => $total,
+                        'status' => 'pending',
                     ]);
 
                     foreach ($cart as $menuId => $item) {
                         OrderItem::create([
-                            'order_id' =>
-                                $order->id,
-
-                            'menu_id' =>
-                                $menuId,
-
-                            'qty' =>
-                                $item['qty'],
-
-                            'harga_satuan' =>
-                                $item['harga'],
-
-                            'subtotal' =>
-                                $item['harga']
-                                * $item['qty'],
+                            'order_id' => $order->id,
+                            'menu_id' => $menuId,
+                            'qty' => $item['qty'],
+                            'harga_satuan' => $item['harga'],
+                            'subtotal' => $item['harga'] * $item['qty'],
                         ]);
                     }
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | DATABASE PAYMENT
-                    |--------------------------------------------------------------------------
-                    | Nilai yang diizinkan:
-                    | tunai, transfer, qris
-                    */
 
                     $metode = strtolower(
                         $request->metode_pembayaran
@@ -260,14 +242,9 @@ class CustomerController extends Controller
                     }
 
                     Payment::create([
-                        'order_id' =>
-                            $order->id,
-
-                        'metode_pembayaran' =>
-                            $metode,
-
-                        'jumlah_bayar' =>
-                            $total,
+                        'order_id' => $order->id,
+                        'metode_pembayaran' => $metode,
+                        'jumlah_bayar' => $total,
                     ]);
 
                     return $order;

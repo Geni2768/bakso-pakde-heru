@@ -526,3 +526,314 @@ document.addEventListener('DOMContentLoaded', function () {
 
 @endsection
 
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const messageBox = document.getElementById('ajax-message');
+
+    document.querySelectorAll('.add-cart-form').forEach(function (form) {
+
+        form.addEventListener('submit', async function (event) {
+
+            event.preventDefault();
+
+            const button = form.querySelector('button');
+
+            const originalText = button.innerHTML;
+
+            button.disabled = true;
+
+            button.innerHTML = '⏳ Menambahkan...';
+
+            try {
+
+                const response = await fetch(
+                    form.action,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN':
+                                document.querySelector(
+                                    'meta[name="csrf-token"]'
+                                ).getAttribute('content'),
+
+                            'Accept':
+                                'application/json',
+
+                            'X-Requested-With':
+                                'XMLHttpRequest'
+                        },
+                        body: new FormData(form)
+                    }
+                );
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(
+                        data.message
+                        || 'Gagal menambahkan menu.'
+                    );
+                }
+
+                messageBox.classList.add('show');
+
+                messageBox.classList.remove(
+                    'alert-danger'
+                );
+
+                messageBox.classList.add(
+                    'alert-success'
+                );
+
+                messageBox.textContent =
+                    data.message;
+
+                button.innerHTML =
+                    '✓ Ditambahkan';
+
+                const cartCount =
+                    document.querySelector(
+                        '#cart-count'
+                    );
+
+                if (cartCount) {
+                    cartCount.textContent =
+                        data.cart_count;
+                }
+
+                setTimeout(function () {
+
+                    messageBox.classList.remove(
+                        'show'
+                    );
+
+                    button.innerHTML =
+                        originalText;
+
+                    button.disabled = false;
+
+                }, 2000);
+
+            } catch (error) {
+
+                messageBox.classList.add(
+                    'show'
+                );
+
+                messageBox.classList.remove(
+                    'alert-success'
+                );
+
+                messageBox.classList.add(
+                    'alert-danger'
+                );
+
+                messageBox.textContent =
+                    error.message
+                    || 'Terjadi kesalahan.';
+
+                button.innerHTML =
+                    originalText;
+
+                button.disabled = false;
+
+            }
+
+        });
+
+    });
+
+});
+</script>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const searchInput = document.querySelector(
+        'input[name="search"]'
+    );
+
+    const menuContainer = document.querySelector(
+        '.row.g-4'
+    );
+
+    let searchTimer;
+
+    if (!searchInput || !menuContainer) {
+        return;
+    }
+
+    searchInput.addEventListener(
+        'input',
+        function () {
+
+            clearTimeout(searchTimer);
+
+            searchTimer = setTimeout(
+                async function () {
+
+                    const keyword =
+                        searchInput.value.trim();
+
+                    try {
+
+                        const response =
+                            await fetch(
+                                '{{ route("customer.menu") }}'
+                                + '?search='
+                                + encodeURIComponent(
+                                    keyword
+                                ),
+                                {
+                                    headers: {
+                                        'Accept':
+                                            'application/json',
+
+                                        'X-Requested-With':
+                                            'XMLHttpRequest'
+                                    }
+                                }
+                            );
+
+                        const data =
+                            await response.json();
+
+                        if (!data.success) {
+                            return;
+                        }
+
+                        menuContainer.innerHTML = '';
+
+                        if (
+                            data.menus.length === 0
+                        ) {
+
+                            menuContainer.innerHTML = `
+                                <div class="col-12">
+                                    <div class="empty-menu">
+                                        <div class="empty-menu-icon">
+                                            🍜
+                                        </div>
+
+                                        <div class="empty-menu-title">
+                                            Menu Tidak Ditemukan
+                                        </div>
+
+                                        <div class="empty-menu-text">
+                                            Maaf, menu yang kamu cari belum tersedia.
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+
+                            return;
+                        }
+
+                        data.menus.forEach(
+                            function (menu) {
+
+                                const harga =
+                                    new Intl.NumberFormat(
+                                        'id-ID'
+                                    ).format(
+                                        menu.harga
+                                    );
+
+                                const gambar =
+                                    menu.gambar
+                                    ? `
+                                    <img
+                                        src="/storage/${menu.gambar}"
+                                        alt="${menu.nama_menu}"
+                                        class="menu-image"
+                                    >
+                                    `
+                                    : `
+                                    <div class="no-image">
+                                        🍜
+                                    </div>
+                                    `;
+
+                                menuContainer.innerHTML += `
+                                    <div class="col-6 col-md-4 col-lg-3">
+
+                                        <div class="menu-card">
+
+                                            ${gambar}
+
+                                            <div class="menu-content">
+
+                                                <div class="menu-category">
+                                                    ${menu.kategori}
+                                                </div>
+
+                                                <div class="menu-name">
+                                                    ${menu.nama_menu}
+                                                </div>
+
+                                                <div class="menu-description">
+                                                    ${
+                                                        menu.deskripsi
+                                                        || 'Menu lezat khas Bakso Pakde Heru.'
+                                                    }
+                                                </div>
+
+                                                <div class="menu-price">
+                                                    Rp${harga}
+                                                </div>
+
+                                                <form
+                                                    action="/cart/add/${menu.id}"
+                                                    method="POST"
+                                                    class="add-cart-form"
+                                                >
+
+                                                    <input
+                                                        type="hidden"
+                                                        name="_token"
+                                                        value="{{ csrf_token() }}"
+                                                    >
+
+                                                    <button
+                                                        type="submit"
+                                                        class="btn-add-cart"
+                                                    >
+                                                        🛒 Tambah ke Keranjang
+                                                    </button>
+
+                                                </form>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                `;
+
+                            }
+                        );
+
+                    } catch (error) {
+
+                        console.error(
+                            'Pencarian gagal:',
+                            error
+                        );
+
+                    }
+
+                },
+                400
+            );
+
+        }
+    );
+
+});
+</script>
+@endpush
