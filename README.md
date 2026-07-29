@@ -2,93 +2,357 @@
 
 ## Sistem Informasi Pemesanan, Kasir, dan Manajemen Menu Berbasis Web
 
-Bakso Pakde Heru adalah aplikasi web berbasis Laravel yang dikembangkan sebagai Proyek Akhir Semester (UAS) mata kuliah Pemrograman Web II.
+**Bakso Pakde Heru** merupakan aplikasi web berbasis **Laravel** yang dikembangkan sebagai **Proyek Akhir Semester (UAS) Mata Kuliah Pemrograman Web II**.
 
-Sistem ini dirancang untuk membantu pelanggan melihat menu, mencari makanan, menambahkan menu ke keranjang, melakukan checkout, dan melihat riwayat pesanan. Aplikasi juga menyediakan halaman khusus untuk Admin dan Kasir agar proses pengelolaan menu, kategori, pembayaran, dan pesanan dapat dilakukan dengan lebih mudah.
+Aplikasi ini dirancang untuk membantu proses pemesanan makanan secara digital mulai dari pelanggan melakukan pemesanan, kasir mengelola pesanan, hingga admin mengelola menu, kategori, dan pembayaran.
 
-Aplikasi menerapkan sistem autentikasi dan otorisasi berdasarkan role menggunakan Laravel Middleware. Setiap pengguna memiliki hak akses yang berbeda sesuai dengan perannya.
+Selain menyediakan fitur CRUD, aplikasi ini juga menerapkan konsep-konsep Laravel seperti **Authentication, Authorization (Middleware), Migration, Seeder, Eloquent Relationship, AJAX (Fetch API), dan Eager Loading**.
 
+---
 
-## 👥 Anggota Kelompok
+# 👥 Anggota Kelompok
 
 1. Maria Geni Anita Mare
 2. Novriadi Naibahi
 3. Theobaldus S. Ngaban
 
+---
 
-## 🎯 Tujuan
+# 🎯 Tujuan Aplikasi
 
-Aplikasi ini bertujuan untuk:
+Aplikasi ini dibuat untuk:
 
-- Memudahkan pelanggan melihat dan mencari menu.
-- Memudahkan pelanggan melakukan pemesanan makanan.
-- Menyediakan fitur keranjang dan checkout.
-- Membantu kasir mengelola pesanan pelanggan.
-- Membantu admin mengelola menu dan kategori.
-- Menerapkan autentikasi dan hak akses berdasarkan role.
-- Menerapkan konsep Laravel dalam pengembangan aplikasi web.
+* Memudahkan pelanggan melakukan pemesanan makanan secara online.
+* Mempermudah admin mengelola menu dan kategori.
+* Membantu kasir dalam memproses pesanan pelanggan.
+* Menerapkan konsep Laravel sesuai standar industri.
+* Memenuhi persyaratan Proyek Akhir Semester (UAS) Pemrograman Web II.
 
+---
 
+# 🛠 Teknologi yang Digunakan
 
-## 👤 Role Pengguna
+* Laravel 12
+* PHP 8.x
+* SQLite / MySQL
+* Bootstrap 5
+* JavaScript
+* Fetch API (AJAX)
+* Laravel Blade
+* Eloquent ORM
+* Laravel Middleware
+* Laravel Migration
+* Seeder & Faker
+* Vite
+* Git
+* GitHub
 
-Aplikasi memiliki tiga jenis pengguna:
+---
 
-### 1. Admin
+# 👤 Hak Akses (Role)
 
-Admin memiliki akses untuk:
+Aplikasi memiliki tiga jenis pengguna.
 
-- Melihat Dashboard Admin.
-- Melihat jumlah menu, kategori, dan pesanan.
-- Menambah, melihat, mengubah, dan menghapus menu.
-- Menambah dan menghapus kategori.
-- Melihat seluruh pesanan pelanggan.
-- Mengubah status pesanan.
+## 1. Admin
 
-### 2. Kasir
+Admin memiliki hak akses untuk:
 
-Kasir memiliki akses untuk:
+* Login
+* Dashboard Admin
+* Mengelola Menu
+* Mengelola Kategori
+* Mengelola Pesanan
+* Mengelola Pembayaran
+* Melihat statistik data
 
-- Melihat Dashboard Kasir.
-- Melihat data pesanan.
-- Mengelola dan memperbarui status pesanan.
+---
 
-### 3. Pelanggan
+## 2. Kasir
 
-Pelanggan memiliki akses untuk:
+Kasir memiliki hak akses untuk:
 
-- Registrasi akun.
-- Login dan logout.
-- Melihat daftar menu.
-- Mencari menu secara otomatis.
-- Menambahkan menu ke keranjang.
-- Mengubah jumlah menu pada keranjang.
-- Menghapus menu dari keranjang.
-- Melakukan checkout.
-- Memilih metode pembayaran.
-- Melihat riwayat pesanan.
+* Login
+* Dashboard Kasir
+* Melihat daftar pesanan
+* Mengubah status pesanan
+* Memproses pembayaran pelanggan
 
-## 🔐 Autentikasi dan Otorisasi
+---
 
-Aplikasi menggunakan Laravel Authentication untuk proses:
+## 3. Pelanggan
 
-- Registrasi.
-- Login.
-- Logout.
-- Pengelolaan session pengguna.
+Pelanggan dapat:
 
-Pembatasan hak akses dilakukan di sisi server menggunakan Laravel Middleware.
+* Registrasi akun
+* Login dan Logout
+* Melihat daftar menu
+* Melakukan pencarian menu
+* Menambahkan menu ke keranjang
+* Mengubah jumlah pesanan
+* Menghapus menu dari keranjang
+* Checkout
+* Memilih metode pembayaran
+* Melihat riwayat pesanan
 
-Role yang digunakan:
+---
 
-```text
-admin
-kasir
-pelanggan
+# 🔐 Authentication & Authorization
 
-## Hak Cipta
+Aplikasi menggunakan sistem autentikasi Laravel.
 
-© 2026 Maria Geni Anita Mare, Novriadi Naibahi, dan Theobaldus S. Ngaban.  
-Semua hak cipta dilindungi.
+Fitur yang diterapkan:
 
-Project ini dibuat untuk keperluan akademik sebagai Proyek Akhir Semester (UAS).
+* Login
+* Register
+* Logout
+* Session Authentication
+* Middleware
+* Pembatasan hak akses berdasarkan role (Admin, Kasir, dan Pelanggan)
+
+Setiap halaman penting diproteksi menggunakan **Laravel Middleware**, sehingga pengguna hanya dapat mengakses halaman sesuai dengan role yang dimiliki.
+
+---
+
+# 🗄 Database
+
+Database dibangun menggunakan Laravel Migration.
+
+Relasi antar tabel menggunakan **Foreign Key** sehingga menjaga konsistensi data.
+
+Database utama meliputi:
+
+* users
+* categories
+* menus
+* orders
+* order_items
+* payments
+
+Aplikasi juga dilengkapi Seeder dan Faker untuk menghasilkan data contoh sehingga memudahkan proses pengujian.
+
+---
+
+# ⚡ Implementasi AJAX / Fetch API
+
+Aplikasi menerapkan AJAX menggunakan **Fetch API** pada beberapa fitur penting.
+
+### 1. Pencarian Menu
+
+* Pencarian dilakukan secara otomatis.
+* Tidak memerlukan reload halaman.
+* Data diambil melalui request AJAX.
+
+### 2. Tambah ke Keranjang
+
+* Menu ditambahkan menggunakan AJAX.
+* Jumlah item keranjang diperbarui secara otomatis.
+* Halaman tidak melakukan refresh setelah proses berhasil.
+
+Implementasi ini meningkatkan pengalaman pengguna (User Experience) dan memenuhi persyaratan integrasi AJAX pada proyek UAS.
+
+---
+
+# 🚀 Optimasi Performa
+
+Untuk meningkatkan performa aplikasi, diterapkan:
+
+* Eager Loading pada relasi Eloquent untuk menghindari Query N+1.
+* Struktur relasi database menggunakan Eloquent Relationship.
+* Kode dipisahkan ke Controller sehingga logika bisnis tidak berada pada Route maupun View.
+
+---
+
+# ⚙️ Cara Instalasi
+
+Clone repository:
+
+```bash
+git clone https://github.com/Geni2768/bakso-pakde-heru.git
+```
+
+Masuk ke folder project:
+
+```bash
+cd bakso-pakde-heru
+```
+
+Install dependency PHP:
+
+```bash
+composer install
+```
+
+Install dependency JavaScript:
+
+```bash
+npm install
+```
+
+Salin file environment:
+
+```bash
+cp .env.example .env
+```
+
+Generate application key:
+
+```bash
+php artisan key:generate
+```
+
+Konfigurasi database pada file `.env`.
+
+Jalankan migration dan seeder:
+
+```bash
+php artisan migrate --seed
+```
+
+Jalankan Vite:
+
+```bash
+npm run dev
+```
+
+Jalankan server Laravel:
+
+```bash
+php artisan serve
+```
+
+Buka aplikasi melalui browser:
+
+```
+http://127.0.0.1:8000
+```
+
+---
+
+# 🔑 Akun Demo
+
+## Admin
+
+Email:
+
+```
+admin@baksopakheru.com
+```
+
+Password:
+
+```
+admin123
+```
+
+---
+
+## Kasir
+
+Email:
+
+```
+kasir1@baksopakheru.com
+```
+
+Password:
+
+password
+
+---
+
+## Pelanggan
+
+Silakan melakukan registrasi melalui halaman **Register** atau menggunakan akun pelanggan yang tersedia pada database hasil Seeder.
+
+---
+
+# 📖 Panduan Penggunaan
+
+## Admin
+
+1. Login sebagai Admin.
+2. Masuk ke Dashboard Admin.
+3. Kelola kategori.
+4. Kelola menu.
+5. Kelola pesanan.
+6. Kelola pembayaran.
+
+---
+
+## Kasir
+
+1. Login sebagai Kasir.
+2. Buka Dashboard Kasir.
+3. Lihat daftar pesanan.
+4. Perbarui status pesanan.
+5. Konfirmasi pembayaran.
+
+---
+
+## Pelanggan
+
+1. Registrasi akun.
+2. Login.
+3. Lihat daftar menu.
+4. Cari menu menggunakan fitur pencarian.
+5. Tambahkan menu ke keranjang.
+6. Checkout pesanan.
+7. Pilih metode pembayaran.
+8. Lihat riwayat pesanan.
+
+---
+
+# 📂 Struktur Folder
+
+```
+app/
+bootstrap/
+config/
+database/
+public/
+resources/
+routes/
+storage/
+tests/
+```
+
+---
+
+# 📌 Fitur Utama
+
+✅ Multi Role Authentication
+
+✅ Middleware Authorization
+
+✅ CRUD Menu
+
+✅ CRUD Kategori
+
+✅ Keranjang Belanja
+
+✅ Checkout
+
+✅ Riwayat Pesanan
+
+✅ Manajemen Pembayaran
+
+✅ AJAX Pencarian Menu
+
+✅ AJAX Tambah ke Keranjang
+
+✅ Migration
+
+✅ Seeder & Faker
+
+✅ Eloquent Relationship
+
+---
+
+# 📄 Lisensi
+
+Project ini dibuat untuk keperluan akademik sebagai **Proyek Akhir Semester (UAS) Mata Kuliah Pemrograman Web II**.
+
+Hak cipta © 2026 Maria Geni Anita Mare, Novriadi Naibahi, dan Theobaldus S. Ngaban.
+
+Seluruh hak cipta dilindungi.
+
