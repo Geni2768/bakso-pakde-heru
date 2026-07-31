@@ -346,7 +346,108 @@ tests/
 
 ✅ Eloquent Relationship
 
+## 👨‍💼 Dashboard Admin
+
+```text
+                    ┌─────────────────────┐
+                    │   Dashboard Admin   │
+                    └──────────┬──────────┘
+                               │
+      ┌──────────────┬─────────┼──────────┬──────────────┐
+      ▼              ▼         ▼          ▼              ▼
+┌───────────┐ ┌──────────┐ ┌──────────┐ ┌────────────┐ ┌──────────┐
+│ Data Menu │ │Kategori  │ │ Pesanan │ │Pembayaran │ │ Laporan │
+└─────┬─────┘ └────┬─────┘ └────┬─────┘ └─────┬──────┘ └────┬─────┘
+      ▼            ▼            ▼             ▼              ▼
+ Tambah/Edit   Tambah/Edit  Update Status  Verifikasi     Statistik
+   Hapus         Hapus        Pesanan      Pembayaran     Penjualan
+
+## 💳 Dashboard Kasir
+
+```text
+                 ┌────────────────────┐
+                 │ Dashboard Kasir    │
+                 └─────────┬──────────┘
+                           │
+          ┌────────────────┼────────────────┐
+          ▼                ▼                ▼
+   ┌─────────────┐  ┌──────────────┐  ┌──────────────┐
+   │ Daftar      │  │ Pembayaran   │  │ Riwayat      │
+   │ Pesanan     │  │ Pesanan      │  │ Transaksi    │
+   └─────┬───────┘  └──────┬───────┘  └──────┬───────┘
+         ▼                 ▼                 ▼
+  Konfirmasi Order   Verifikasi Bayar   Laporan Harian
+```
+## 👤 Dashboard Pelanggan
+
+```text
+                 ┌────────────────────┐
+                 │ Dashboard Customer │
+                 └─────────┬──────────┘
+                           │
+      ┌──────────────┬─────┼────────────┬─────────────┐
+      ▼              ▼     ▼            ▼             ▼
+┌──────────┐ ┌──────────┐ ┌─────────┐ ┌──────────┐ ┌────────────┐
+│ Lihat    │ │ Detail   │ │ Cart    │ │ Checkout │ │ Riwayat    │
+│ Menu     │ │ Menu     │ │         │ │          │ │ Pesanan    │
+└────┬─────┘ └────┬─────┘ └────┬────┘ └────┬─────┘ └─────┬──────┘
+     ▼            ▼            ▼           ▼             ▼
+ Tambah Cart   Lihat Detail  Edit Qty   Pembayaran   Status Order
+```
+
+# 🖼️ Tampilan Aplikasi
+
+Berikut merupakan beberapa tampilan utama dari aplikasi **Bakso Pakde Heru**.
+
 ---
+
+## 🏠 Landing Page
+
+<p align="center">
+    <img src="docs/images/landing-page.png" width="900">
+</p>
+
+Landing Page merupakan halaman utama yang menampilkan informasi restoran, menu favorit, serta tombol untuk login, registrasi, dan melakukan pemesanan.
+
+---
+
+## 👨‍💼 Dashboard Admin
+
+<p align="center">
+    <img src="docs/images/dashboard-admin.png" width="900">
+</p>
+
+Dashboard Admin digunakan untuk memantau statistik aplikasi serta mengelola seluruh data yang ada pada sistem, seperti Menu, Kategori, Pesanan, Pembayaran, dan Data Pengguna.
+
+---
+
+## 💳 Dashboard Kasir
+
+<p align="center">
+    <img src="docs/images/dashboard-kasir.png" width="900">
+</p>
+
+Dashboard Kasir digunakan untuk melihat daftar pesanan pelanggan, memproses pembayaran, serta memperbarui status pesanan.
+
+---
+
+## 👤 Dashboard Pelanggan
+
+<p align="center">
+    <img src="docs/images/dashboard-pelanggan.png" width="900">
+</p>
+
+Dashboard Pelanggan digunakan untuk melihat menu makanan, melakukan pemesanan, mengelola keranjang belanja, checkout, dan melihat riwayat transaksi.
+
+---
+
+## 🍜 Kelola Menu
+
+<p align="center">
+    <img src="docs/images/menu.png" width="900">
+</p>
+
+Halaman Menu digunakan oleh Admin untuk menambah, mengubah, menghapus, dan mengelola seluruh data menu yang tersedia.
 
 # 📄 Lisensi
 
