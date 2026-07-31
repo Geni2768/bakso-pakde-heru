@@ -246,6 +246,20 @@ admin123
 
 ---
 
+## Kasir
+
+Email:
+
+```
+kasir@gmail.com
+```
+
+Password:
+
+```
+password123
+```
+
 ## Pelanggan
 
 Email:
