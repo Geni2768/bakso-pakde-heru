@@ -223,7 +223,7 @@ php artisan serve
 Buka aplikasi melalui browser:
 
 ```
-http://127.0.0.1:8000
+http://127.0.0.1:8080
 ```
 
 ---
@@ -235,7 +235,7 @@ http://127.0.0.1:8000
 Email:
 
 ```
-admin@baksopakheru.com
+admin@gmail.com
 ```
 
 Password:
@@ -246,20 +246,18 @@ admin123
 
 ---
 
-## Kasir
+## Pelanggan
 
 Email:
 
 ```
-kasir1@baksopakheru.com
+budisantoso@gmail.com
 ```
 
 Password:
-
-password
-
----
-
+```
+password123
+```
 ## Pelanggan
 
 Silakan melakukan registrasi melalui halaman **Register** atau menggunakan akun pelanggan yang tersedia pada database hasil Seeder.
