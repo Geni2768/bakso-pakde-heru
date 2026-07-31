@@ -37,9 +37,9 @@ class AuthenticatedSessionController extends Controller
                 ->onlyInput('email');
         }
 
-        $request->session()->regenerate();
+       $request->session()->regenerate();
 
-        $user = Auth::user();
+$user = Auth::user();
 
         /*
         |--------------------------------------------------------------------------

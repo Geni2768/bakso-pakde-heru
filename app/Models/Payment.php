@@ -12,21 +12,19 @@ class Payment extends Model
     protected $fillable = [
         'order_id',
         'metode_pembayaran',
-        'jumlah_bayar',
+        'amount',
+        'status',
+        'bukti_pembayaran',
+        'paid_at',
     ];
 
     protected $casts = [
-        'jumlah_bayar' => 'decimal:2',
+        'amount' => 'decimal:2',
+        'paid_at' => 'datetime',
     ];
 
-    /**
-     * Relasi pembayaran ke pesanan
-     */
     public function order(): BelongsTo
     {
-        return $this->belongsTo(
-            Order::class,
-            'order_id'
-        );
+        return $this->belongsTo(Order::class);
     }
 }

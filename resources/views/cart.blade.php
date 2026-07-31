@@ -322,70 +322,46 @@
                             </div>
 
 
-                            {{-- PEMBAYARAN --}}
-                            <div class="mb-4">
+                           {{-- PEMBAYARAN --}}
+<div class="mb-4">
 
-                                <label class="form-label">
+    <label class="form-label">
+        Metode Pembayaran
+    </label>
 
-                                    Metode Pembayaran
+    <select
+        name="metode_pembayaran"
+        class="form-select @error('metode_pembayaran') is-invalid @enderror"
+        required
+    >
 
-                                </label>
+        <option value="">
+            -- Pilih Metode Pembayaran --
+        </option>
 
-                                <select
-                                    name="metode_pembayaran"
-                                    class="form-select @error('metode_pembayaran') is-invalid @enderror"
-                                    required
-                                >
+        <option
+            value="cod"
+            {{ old('metode_pembayaran') == 'cod' ? 'selected' : '' }}
+        >
+            Tunai / COD
+        </option>
 
-                                    <option value="">
+        <option
+            value="transfer"
+            {{ old('metode_pembayaran') == 'transfer' ? 'selected' : '' }}
+        >
+            Transfer
+        </option>
 
-                                        -- Pilih Metode Pembayaran --
+    </select>
 
-                                    </option>
+    @error('metode_pembayaran')
+        <div class="invalid-feedback">
+            {{ $message }}
+        </div>
+    @enderror
 
-                                    {{-- DATABASE MENERIMA: tunai --}}
-                                    <option
-                                        value="tunai"
-                                        {{ old('metode_pembayaran') === 'tunai' ? 'selected' : '' }}
-                                    >
-
-                                        Tunai / COD
-
-                                    </option>
-
-                                    {{-- DATABASE MENERIMA: transfer --}}
-                                    <option
-                                        value="transfer"
-                                        {{ old('metode_pembayaran') === 'transfer' ? 'selected' : '' }}
-                                    >
-
-                                        Transfer
-
-                                    </option>
-
-                                    {{-- DATABASE MENERIMA: qris --}}
-                                    <option
-                                        value="qris"
-                                        {{ old('metode_pembayaran') === 'qris' ? 'selected' : '' }}
-                                    >
-
-                                        QRIS
-
-                                    </option>
-
-                                </select>
-
-                                @error('metode_pembayaran')
-
-                                    <div class="invalid-feedback">
-
-                                        {{ $message }}
-
-                                    </div>
-
-                                @enderror
-
-                            </div>
+</div>
 
 
                             {{-- TOTAL --}}

@@ -8,18 +8,15 @@ use App\Models\OrderItem;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
 
 class CustomerController extends Controller
 {
     public function index()
     {
-        $menus = Cache::remember('home_menus', 300, function () {
-            return Menu::with('kategori')
-                ->latest()
-                ->limit(4)
-                ->get();
-        });
+        $menus = Menu::with('kategori')
+            ->latest()
+            ->limit(4)
+            ->get();
 
         return view('home', compact('menus'));
     }
@@ -28,26 +25,12 @@ class CustomerController extends Controller
     {
         $search = $request->input('search');
 
-        $cacheKey = 'menus_' . md5($search ?? '');
-
-        $menus = Cache::remember($cacheKey, 300, function () use ($search) {
-            return Menu::with('kategori')
-                ->when($search, function ($query) use ($search) {
-                    $query->where(
-                        'nama_menu',
-                        'like',
-                        '%' . $search . '%'
-                    );
-                })
-                ->latest()
-                ->get();
-        });
-
-        /*
-        |--------------------------------------------------------------------------
-        | RESPONSE AJAX
-        |--------------------------------------------------------------------------
-        */
+        $menus = Menu::with('kategori')
+            ->when($search, function ($query) use ($search) {
+                $query->where('nama_menu', 'like', '%' . $search . '%');
+            })
+            ->latest()
+            ->get();
 
         if ($request->expectsJson()) {
             return response()->json([
@@ -67,10 +50,7 @@ class CustomerController extends Controller
             ]);
         }
 
-        return view(
-            'menu.index',
-            compact('menus', 'search')
-        );
+        return view('menu.index', compact('menus', 'search'));
     }
 
     public function addCart(Request $request, $id)
@@ -95,17 +75,12 @@ class CustomerController extends Controller
         if ($request->expectsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => $menu->nama_menu .
-                    ' berhasil ditambahkan ke keranjang.',
+                'message' => $menu->nama_menu . ' berhasil ditambahkan ke keranjang.',
                 'cart_count' => collect($cart)->sum('qty'),
             ]);
         }
 
-        return back()->with(
-            'success',
-            $menu->nama_menu .
-            ' berhasil ditambahkan ke keranjang.'
-        );
+        return back()->with('success', $menu->nama_menu . ' berhasil ditambahkan ke keranjang.');
     }
 
     public function cart()
@@ -128,20 +103,14 @@ class CustomerController extends Controller
         $cart = session()->get('cart', []);
 
         if (!isset($cart[$id])) {
-            return back()->with(
-                'error',
-                'Menu tidak ditemukan di keranjang.'
-            );
+            return back()->with('error', 'Menu tidak ditemukan di keranjang.');
         }
 
         $cart[$id]['qty'] = $request->qty;
 
         session()->put('cart', $cart);
 
-        return back()->with(
-            'success',
-            'Jumlah pesanan berhasil diperbarui.'
-        );
+        return back()->with('success', 'Jumlah pesanan berhasil diperbarui.');
     }
 
     public function deleteCart($id)
@@ -154,37 +123,24 @@ class CustomerController extends Controller
 
         session()->put('cart', $cart);
 
-        return back()->with(
-            'success',
-            'Menu berhasil dihapus dari keranjang.'
-        );
+        return back()->with('success', 'Menu berhasil dihapus dari keranjang.');
     }
 
     public function orders()
     {
-        $orders = Order::with([
-            'items.menu',
-            'payment',
-        ])
+        $orders = Order::with(['items.menu', 'payment'])
             ->where('user_id', auth()->id())
             ->latest()
             ->get();
 
-        return view(
-            'pelanggan.orders',
-            compact('orders')
-        );
+        return view('pelanggan.orders', compact('orders'));
     }
 
     public function checkout(Request $request)
     {
         if (!auth()->check()) {
-            return redirect()
-                ->route('login')
-                ->with(
-                    'error',
-                    'Silakan login terlebih dahulu untuk melakukan checkout.'
-                );
+            return redirect()->route('login')
+                ->with('error', 'Silakan login terlebih dahulu untuk melakukan checkout.');
         }
 
         $request->validate([
@@ -197,10 +153,7 @@ class CustomerController extends Controller
         $cart = session()->get('cart', []);
 
         if (empty($cart)) {
-            return back()->with(
-                'error',
-                'Keranjang kamu masih kosong.'
-            );
+            return back()->with('error', 'Keranjang kamu masih kosong.');
         }
 
         $total = collect($cart)->sum(function ($item) {
@@ -208,68 +161,51 @@ class CustomerController extends Controller
         });
 
         try {
-            $order = DB::transaction(
-                function () use (
-                    $request,
-                    $cart,
-                    $total
-                ) {
-                    $order = Order::create([
-                        'user_id' => auth()->id(),
-                        'nama_lengkap' => $request->nama_lengkap,
-                        'no_whatsapp' => $request->no_whatsapp,
-                        'alamat' => $request->alamat,
-                        'total_harga' => $total,
-                        'status' => 'pending',
-                    ]);
+            $order = DB::transaction(function () use ($request, $cart, $total) {
 
-                    foreach ($cart as $menuId => $item) {
-                        OrderItem::create([
-                            'order_id' => $order->id,
-                            'menu_id' => $menuId,
-                            'qty' => $item['qty'],
-                            'harga_satuan' => $item['harga'],
-                            'subtotal' => $item['harga'] * $item['qty'],
-                        ]);
-                    }
+    $order = Order::create([
+        'user_id' => auth()->id(),
+        'nama_lengkap' => $request->nama_lengkap,
+        'no_whatsapp' => $request->no_whatsapp,
+        'alamat' => $request->alamat,
+        'total_harga' => $total,
+        'status' => 'pending',
+    ]);
 
-                    $metode = strtolower(
-                        $request->metode_pembayaran
-                    );
+    foreach ($cart as $menuId => $item) {
+        OrderItem::create([
+            'order_id' => $order->id,
+            'menu_id' => $menuId,
+            'qty' => $item['qty'],
+            'harga_satuan' => $item['harga'],
+            'subtotal' => $item['harga'] * $item['qty'],
+        ]);
+    }
 
-                    if ($metode === 'cod') {
-                        $metode = 'tunai';
-                    }
+    // Mapping metode pembayaran agar sesuai database
+    $metode = match (strtolower($request->metode_pembayaran)) {
+        'tunai', 'cod' => 'cod',
+        'transfer' => 'transfer',
+        default => 'cod',
+    };
 
-                    Payment::create([
-                        'order_id' => $order->id,
-                        'metode_pembayaran' => $metode,
-                        'jumlah_bayar' => $total,
-                    ]);
+    Payment::create([
+        'order_id' => $order->id,
+        'metode_pembayaran' => $metode,
+        'amount' => $total,
+        'status' => 'pending',
+    ]);
 
-                    return $order;
-                }
-            );
-
+    return $order;
+});
             session()->forget('cart');
 
-            return redirect()
-                ->route('customer.orders')
-                ->with(
-                    'success',
-                    'Pesanan #' .
-                    $order->id .
-                    ' berhasil dibuat.'
-                );
+            return redirect()->route('customer.orders')
+                ->with('success', 'Pesanan #' . $order->id . ' berhasil dibuat.');
 
         } catch (\Throwable $e) {
-            return back()
-                ->withInput()
-                ->with(
-                    'error',
-                    'Gagal membuat pesanan: ' .
-                    $e->getMessage()
-                );
+            return back()->withInput()
+                ->with('error', 'Gagal membuat pesanan: ' . $e->getMessage());
         }
     }
 }

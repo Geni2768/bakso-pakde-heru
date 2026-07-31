@@ -3,12 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderItem extends Model
 {
-    protected $table = 'order_items';
-
     protected $fillable = [
         'order_id',
         'menu_id',
@@ -17,24 +14,12 @@ class OrderItem extends Model
         'subtotal',
     ];
 
-    protected $casts = [
-        'qty' => 'integer',
-        'harga_satuan' => 'decimal:2',
-        'subtotal' => 'decimal:2',
-    ];
-
-    /**
-     * Relasi ke pesanan
-     */
-    public function order(): BelongsTo
+    public function order()
     {
         return $this->belongsTo(Order::class);
     }
 
-    /**
-     * Relasi ke menu
-     */
-    public function menu(): BelongsTo
+    public function menu()
     {
         return $this->belongsTo(Menu::class);
     }
