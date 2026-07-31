@@ -451,27 +451,9 @@ Halaman Menu digunakan oleh Admin untuk menambah, mengubah, menghapus, dan menge
 
 # 👥 Dokumentasi Kelompok
 
-<p align="center">
-  <table>
-    <tr align="center">
-      <td>
-        <img src="docs/images/maria.jpeg" width="180"><br><br>
-        <b>Maria Geni Anita Mare</b><br>
-        <i>Project Manager & Full Stack Developer</i>
-      </td>
-      <td>
-        <img src="docs/images/novriadi.jpeg" width="180"><br><br>
-        <b>Novriadi Naibaho</b><br>
-        <i>Backend Developer</i>
-      </td>
-      <td>
-        <img src="docs/images/theobaldus.jpeg" width="180"><br><br>
-        <b>Theobaldus S. Ngaban</b><br>
-        <i>Frontend Developer</i>
-      </td>
-    </tr>
-  </table>
-</p>
+| Maria Geni Anita Mare | Novriadi Naibaho | Theobaldus S. Ngaban |
+|:----------------------:|:----------------:|:--------------------:|
+| <img src="docs/images/maria.jpeg" width="180"> | <img src="docs/images/novriadi.jpeg" width="180"> | <img src="docs/images/theobaldus.jpeg" width="180"> |
 
 # 📄 Lisensi
 
