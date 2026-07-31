@@ -449,6 +449,12 @@ Dashboard Pelanggan digunakan untuk melihat menu makanan, melakukan pemesanan, m
 
 Halaman Menu digunakan oleh Admin untuk menambah, mengubah, menghapus, dan mengelola seluruh data menu yang tersedia.
 
+# 👥 Dokumentasi Kelompok
+
+| Maria Geni Anita Mare | Novriadi Naibaho | Theobaldus S. Ngaban |
+|:----------------------:|:----------------:|:--------------------:|
+| <img src="docs/images/maria.jpeg" width="180"> | <img src="docs/images/novriadi.jpeg" width="180"> | <img src="docs/images/theobaldus.jpeg" width="180"> |
+
 # 📄 Lisensi
 
 Project ini dibuat untuk keperluan akademik sebagai **Proyek Akhir Semester (UAS) Mata Kuliah Pemrograman Web II**.
